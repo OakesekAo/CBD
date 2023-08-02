@@ -1,0 +1,18 @@
+﻿@{
+    ViewBag.Title = "Import Build JSON Data";
+}
+
+<h2>Import JSON Data</h2>
+@using (Html.BeginForm("BuildImport", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    <div>
+        <label for="jsonFile">Select a JSON File:</label>
+        <input type="file" id="jsonFile" name="jsonFile" accept=".json, .mbd" />
+    </div>
+    <br />
+    <div>
+        <textarea name="jsonData" rows="10" cols="80" placeholder="Or paste JSON data here"></textarea>
+    </div>
+    <br />
+    <input type="submit" value="Import and Display" />
+}
