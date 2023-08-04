@@ -43,7 +43,7 @@ namespace CBD.Controllers
 
 
             // Step 2: Deserialize JSON data into the CharBuild.Rootobject class
-            CharBuild.Build charBuildData = JsonConvert.DeserializeObject < CharBuild.Build>(jsonData);
+            CharBuildJsonRaw.Build charBuildData = JsonConvert.DeserializeObject < CharBuildJsonRaw.Build>(jsonData);
 
             // Step 3: Pass the data to the view
             return View(charBuildData);

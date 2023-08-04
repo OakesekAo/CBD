@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace CBD.Models
 {
-    public class CharBuild
+    public class CharBuildJsonRaw
     {
 
         public class Build
