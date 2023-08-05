@@ -17,7 +17,7 @@ namespace CBD.Data.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.12")
+                .HasAnnotation("ProductVersion", "6.0.20")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -34,9 +34,6 @@ namespace CBD.Data.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("CBDServerId")
-                        .HasColumnType("integer");
-
                     b.Property<string>("ContentType")
                         .IsRequired()
                         .HasColumnType("text");
@@ -51,51 +48,9 @@ namespace CBD.Data.Migrations
                     b.Property<int>("ReadyStatus")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime?>("Updated")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AuthorId");
-
-                    b.HasIndex("CBDServerId");
-
-                    b.ToTable("Build");
-                });
-
-            modelBuilder.Entity("CBD.Models.CBDServer", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<int>("ServerId")
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("AuthorId")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("ContentType")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
-
-                    b.Property<byte[]>("ImageData")
-                        .IsRequired()
-                        .HasColumnType("bytea");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
                     b.Property<DateTime?>("Updated")
                         .HasColumnType("timestamp with time zone");
 
@@ -103,7 +58,9 @@ namespace CBD.Data.Migrations
 
                     b.HasIndex("AuthorId");
 
-                    b.ToTable("CBDServer");
+                    b.HasIndex("ServerId");
+
+                    b.ToTable("Build");
                 });
 
             modelBuilder.Entity("CBD.Models.CBDUser", b =>
@@ -246,6 +203,49 @@ namespace CBD.Data.Migrations
                     b.HasIndex("ModeratorId");
 
                     b.ToTable("Comment");
+                });
+
+            modelBuilder.Entity("CBD.Models.Server", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AuthorId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("ContentType")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<byte[]>("ImageData")
+                        .IsRequired()
+                        .HasColumnType("bytea");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<DateTime?>("Updated")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AuthorId");
+
+                    b.ToTable("Server");
                 });
 
             modelBuilder.Entity("CBD.Models.Tag", b =>
@@ -417,26 +417,15 @@ namespace CBD.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("CBD.Models.CBDServer", "CBDServer")
+                    b.HasOne("CBD.Models.Server", "Server")
                         .WithMany("Builds")
-                        .HasForeignKey("CBDServerId")
+                        .HasForeignKey("ServerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Author");
 
-                    b.Navigation("CBDServer");
-                });
-
-            modelBuilder.Entity("CBD.Models.CBDServer", b =>
-                {
-                    b.HasOne("CBD.Models.CBDUser", "Author")
-                        .WithMany("CBDServers")
-                        .HasForeignKey("AuthorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Author");
+                    b.Navigation("Server");
                 });
 
             modelBuilder.Entity("CBD.Models.Comment", b =>
@@ -464,6 +453,17 @@ namespace CBD.Data.Migrations
                     b.Navigation("Build");
 
                     b.Navigation("Moderator");
+                });
+
+            modelBuilder.Entity("CBD.Models.Server", b =>
+                {
+                    b.HasOne("CBD.Models.CBDUser", "Author")
+                        .WithMany("Servers")
+                        .HasForeignKey("AuthorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Author");
                 });
 
             modelBuilder.Entity("CBD.Models.Tag", b =>
@@ -543,16 +543,16 @@ namespace CBD.Data.Migrations
                     b.Navigation("Tags");
                 });
 
-            modelBuilder.Entity("CBD.Models.CBDServer", b =>
-                {
-                    b.Navigation("Builds");
-                });
-
             modelBuilder.Entity("CBD.Models.CBDUser", b =>
                 {
                     b.Navigation("Builds");
 
-                    b.Navigation("CBDServers");
+                    b.Navigation("Servers");
+                });
+
+            modelBuilder.Entity("CBD.Models.Server", b =>
+                {
+                    b.Navigation("Builds");
                 });
 #pragma warning restore 612, 618
         }

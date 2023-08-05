@@ -161,7 +161,7 @@ namespace CBD.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "CBDServer",
+                name: "Server",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -176,9 +176,9 @@ namespace CBD.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CBDServer", x => x.Id);
+                    table.PrimaryKey("PK_Server", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_CBDServer_AspNetUsers_AuthorId",
+                        name: "FK_Server_AspNetUsers_AuthorId",
                         column: x => x.AuthorId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
@@ -191,7 +191,7 @@ namespace CBD.Data.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    CBDServerId = table.Column<int>(type: "integer", nullable: false),
+                    ServerId = table.Column<int>(type: "integer", nullable: false),
                     AuthorId = table.Column<string>(type: "text", nullable: false),
                     Created = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     Updated = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
@@ -209,9 +209,9 @@ namespace CBD.Data.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Build_CBDServer_CBDServerId",
-                        column: x => x.CBDServerId,
-                        principalTable: "CBDServer",
+                        name: "FK_Build_Server_ServerId",
+                        column: x => x.ServerId,
+                        principalTable: "Server",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -326,14 +326,9 @@ namespace CBD.Data.Migrations
                 column: "AuthorId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Build_CBDServerId",
+                name: "IX_Build_ServerId",
                 table: "Build",
-                column: "CBDServerId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_CBDServer_AuthorId",
-                table: "CBDServer",
-                column: "AuthorId");
+                column: "ServerId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Comment_AuthorId",
@@ -349,6 +344,11 @@ namespace CBD.Data.Migrations
                 name: "IX_Comment_ModeratorId",
                 table: "Comment",
                 column: "ModeratorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Server_AuthorId",
+                table: "Server",
+                column: "AuthorId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Tag_AuthorId",
@@ -391,7 +391,7 @@ namespace CBD.Data.Migrations
                 name: "Build");
 
             migrationBuilder.DropTable(
-                name: "CBDServer");
+                name: "Server");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");

@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CBD.Models
 {
-    public class CBDServer
+    public class Server
     {
         public int Id { get; set; } 
         public string AuthorId { get; set; }

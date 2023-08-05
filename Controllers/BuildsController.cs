@@ -22,7 +22,7 @@ namespace CBD.Controllers
         // GET: Builds
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Build.Include(b => b.Author).Include(b => b.CBDServer);
+            var applicationDbContext = _context.Build.Include(b => b.Author).Include(b => b.Server);
             return View(await applicationDbContext.ToListAsync());
         }
 
@@ -36,7 +36,7 @@ namespace CBD.Controllers
 
             var build = await _context.Build
                 .Include(b => b.Author)
-                .Include(b => b.CBDServer)
+                .Include(b => b.Server)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (build == null)
             {
@@ -50,7 +50,7 @@ namespace CBD.Controllers
         public IActionResult Create()
         {
             ViewData["AuthorId"] = new SelectList(_context.Users, "Id", "Id");
-            ViewData["CBDServerId"] = new SelectList(_context.Set<CBDServer>(), "Id", "Description");
+            ViewData["ServerId"] = new SelectList(_context.Server, "Id", "Description");
             return View();
         }
 
@@ -59,7 +59,7 @@ namespace CBD.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,CBDServerId,AuthorId,Created,Updated,ReadyStatus,ImageData,ContentType")] Build build)
+        public async Task<IActionResult> Create([Bind("Id,ServerId,AuthorId,Created,Updated,ReadyStatus,ImageData,ContentType")] Build build)
         {
             if (ModelState.IsValid)
             {
@@ -68,7 +68,7 @@ namespace CBD.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["AuthorId"] = new SelectList(_context.Users, "Id", "Id", build.AuthorId);
-            ViewData["CBDServerId"] = new SelectList(_context.Set<CBDServer>(), "Id", "Description", build.CBDServerId);
+            ViewData["ServerId"] = new SelectList(_context.Server, "Id", "Description", build.ServerId);
             return View(build);
         }
 
@@ -86,7 +86,7 @@ namespace CBD.Controllers
                 return NotFound();
             }
             ViewData["AuthorId"] = new SelectList(_context.Users, "Id", "Id", build.AuthorId);
-            ViewData["CBDServerId"] = new SelectList(_context.Set<CBDServer>(), "Id", "Description", build.CBDServerId);
+            ViewData["ServerId"] = new SelectList(_context.Server, "Id", "Description", build.ServerId);
             return View(build);
         }
 
@@ -95,7 +95,7 @@ namespace CBD.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,CBDServerId,AuthorId,Created,Updated,ReadyStatus,ImageData,ContentType")] Build build)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,ServerId,AuthorId,Created,Updated,ReadyStatus,ImageData,ContentType")] Build build)
         {
             if (id != build.Id)
             {
@@ -123,7 +123,7 @@ namespace CBD.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["AuthorId"] = new SelectList(_context.Users, "Id", "Id", build.AuthorId);
-            ViewData["CBDServerId"] = new SelectList(_context.Set<CBDServer>(), "Id", "Description", build.CBDServerId);
+            ViewData["ServerId"] = new SelectList(_context.Server, "Id", "Description", build.ServerId);
             return View(build);
         }
 
@@ -137,7 +137,7 @@ namespace CBD.Controllers
 
             var build = await _context.Build
                 .Include(b => b.Author)
-                .Include(b => b.CBDServer)
+                .Include(b => b.Server)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (build == null)
             {

@@ -10,90 +10,90 @@ using CBD.Models;
 
 namespace CBD.Controllers
 {
-    public class CBDServersController : Controller
+    public class ServersController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public CBDServersController(ApplicationDbContext context)
+        public ServersController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        // GET: CBDServers
+        // GET: Servers
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.CBDServer.Include(c => c.Author);
+            var applicationDbContext = _context.Server.Include(s => s.Author);
             return View(await applicationDbContext.ToListAsync());
         }
 
-        // GET: CBDServers/Details/5
+        // GET: Servers/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.CBDServer == null)
+            if (id == null || _context.Server == null)
             {
                 return NotFound();
             }
 
-            var cBDServer = await _context.CBDServer
-                .Include(c => c.Author)
+            var server = await _context.Server
+                .Include(s => s.Author)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (cBDServer == null)
+            if (server == null)
             {
                 return NotFound();
             }
 
-            return View(cBDServer);
+            return View(server);
         }
 
-        // GET: CBDServers/Create
+        // GET: Servers/Create
         public IActionResult Create()
         {
             ViewData["AuthorId"] = new SelectList(_context.Users, "Id", "Id");
             return View();
         }
 
-        // POST: CBDServers/Create
+        // POST: Servers/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,AuthorId,Name,Description,Created,Updated,ImageData,ContentType")] CBDServer cBDServer)
+        public async Task<IActionResult> Create([Bind("Id,AuthorId,Name,Description,Created,Updated,ImageData,ContentType")] Server server)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(cBDServer);
+                _context.Add(server);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["AuthorId"] = new SelectList(_context.Users, "Id", "Id", cBDServer.AuthorId);
-            return View(cBDServer);
+            ViewData["AuthorId"] = new SelectList(_context.Users, "Id", "Id", server.AuthorId);
+            return View(server);
         }
 
-        // GET: CBDServers/Edit/5
+        // GET: Servers/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.CBDServer == null)
+            if (id == null || _context.Server == null)
             {
                 return NotFound();
             }
 
-            var cBDServer = await _context.CBDServer.FindAsync(id);
-            if (cBDServer == null)
+            var server = await _context.Server.FindAsync(id);
+            if (server == null)
             {
                 return NotFound();
             }
-            ViewData["AuthorId"] = new SelectList(_context.Users, "Id", "Id", cBDServer.AuthorId);
-            return View(cBDServer);
+            ViewData["AuthorId"] = new SelectList(_context.Users, "Id", "Id", server.AuthorId);
+            return View(server);
         }
 
-        // POST: CBDServers/Edit/5
+        // POST: Servers/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,AuthorId,Name,Description,Created,Updated,ImageData,ContentType")] CBDServer cBDServer)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,AuthorId,Name,Description,Created,Updated,ImageData,ContentType")] Server server)
         {
-            if (id != cBDServer.Id)
+            if (id != server.Id)
             {
                 return NotFound();
             }
@@ -102,12 +102,12 @@ namespace CBD.Controllers
             {
                 try
                 {
-                    _context.Update(cBDServer);
+                    _context.Update(server);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!CBDServerExists(cBDServer.Id))
+                    if (!ServerExists(server.Id))
                     {
                         return NotFound();
                     }
@@ -118,51 +118,51 @@ namespace CBD.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["AuthorId"] = new SelectList(_context.Users, "Id", "Id", cBDServer.AuthorId);
-            return View(cBDServer);
+            ViewData["AuthorId"] = new SelectList(_context.Users, "Id", "Id", server.AuthorId);
+            return View(server);
         }
 
-        // GET: CBDServers/Delete/5
+        // GET: Servers/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.CBDServer == null)
+            if (id == null || _context.Server == null)
             {
                 return NotFound();
             }
 
-            var cBDServer = await _context.CBDServer
-                .Include(c => c.Author)
+            var server = await _context.Server
+                .Include(s => s.Author)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (cBDServer == null)
+            if (server == null)
             {
                 return NotFound();
             }
 
-            return View(cBDServer);
+            return View(server);
         }
 
-        // POST: CBDServers/Delete/5
+        // POST: Servers/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.CBDServer == null)
+            if (_context.Server == null)
             {
-                return Problem("Entity set 'ApplicationDbContext.CBDServer'  is null.");
+                return Problem("Entity set 'ApplicationDbContext.Server'  is null.");
             }
-            var cBDServer = await _context.CBDServer.FindAsync(id);
-            if (cBDServer != null)
+            var server = await _context.Server.FindAsync(id);
+            if (server != null)
             {
-                _context.CBDServer.Remove(cBDServer);
+                _context.Server.Remove(server);
             }
             
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool CBDServerExists(int id)
+        private bool ServerExists(int id)
         {
-          return (_context.CBDServer?.Any(e => e.Id == id)).GetValueOrDefault();
+          return (_context.Server?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

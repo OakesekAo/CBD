@@ -12,7 +12,7 @@ namespace CBD.Data
         }
         public DbSet<CBD.Models.Build>? Build { get; set; }
         public DbSet<CBD.Models.Comment>? Comment { get; set; }
-        public DbSet<CBD.Models.CBDServer>? CBDServer { get; set; }
+        public DbSet<CBD.Models.Server>? Server { get; set; }
         public DbSet<CBD.Models.Tag>? Tag { get; set; }
     }
 }

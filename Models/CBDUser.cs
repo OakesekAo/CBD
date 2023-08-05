@@ -30,7 +30,7 @@ namespace CBD.Models
         [NotMapped]
         public string? FullName { get { return $"{FirstName} {LastName}"; } }
 
-        public virtual ICollection<CBDServer> CBDServers { get; set; } = new HashSet<CBDServer>();
+        public virtual ICollection<Server> Servers { get; set; } = new HashSet<Server>();
         public virtual ICollection<Build> Builds { get; set; } = new HashSet<Build>();
     }
 }

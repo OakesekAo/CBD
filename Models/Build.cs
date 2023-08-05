@@ -8,7 +8,7 @@ namespace CBD.Models
     public class Build
     {
         public int Id { get; set; }
-        public int CBDServerId { get; set; }
+        public int ServerId { get; set; }
         public string AuthorId { get; set; }
 
         //this is where all the build properties go
@@ -40,7 +40,7 @@ namespace CBD.Models
 
 
         //Navigation Properties
-        public virtual CBDServer CBDServer { get; set; }
+        public virtual Server Server { get; set; }
         public virtual CBDUser Author { get; set; }
 
         public virtual ICollection<Tag> Tags { get; set; } = new HashSet<Tag>();
