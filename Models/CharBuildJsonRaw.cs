@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿using CBD.Enums;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System.Text.Json.Serialization;
 
 namespace CBD.Models
@@ -6,17 +8,30 @@ namespace CBD.Models
     public class CharBuildJsonRaw
     {
 
+
+
+
+
         public class Build
         {
+            
             public Builtwith BuiltWith { get; set; }
             public string Class { get; set; }
+            public string ClassDisplay { get; set; }
             public string Origin { get; set; }
             public string Alignment { get; set; }
             public string Name { get; set; }
             public string Comment { get; set; }
-            public string[] PowerSets { get; set; }
+            public PowerSets[] PowerSets { get; set; }
             public int LastPower { get; set; }
             public Powerentry[] PowerEntries { get; set; }
+        }
+
+        public class PowerSets
+        {
+            public string Name { get; set; }
+            public string NameDisplay { get; set; }
+            public PowerSetType Type { get; set; } // Define a PowerSetType enum or similar
         }
 
         public class Builtwith
@@ -30,6 +45,8 @@ namespace CBD.Models
         public class Powerentry
         {
             public string PowerName { get; set; }
+            public string PowerNameDisplay { get; set; }
+            public PowerSetType PowerSetType { get; set; }
             public int Level { get; set; }
             public bool StatInclude { get; set; }
             public bool ProcInclude { get; set; }

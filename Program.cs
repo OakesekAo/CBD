@@ -1,6 +1,7 @@
 using CBD.Data;
 using CBD.Helpers;
 using CBD.Models;
+using CBD.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -21,10 +22,15 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
+//custom services
+builder.Services.AddScoped<DataService>();
+                            
+
 var app = builder.Build();
 var scope = app.Services.CreateScope();
 //Databse update with latest migration
 await DataHelper.ManageDataAsync(scope.ServiceProvider);
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

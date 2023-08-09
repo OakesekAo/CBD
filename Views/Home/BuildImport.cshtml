@@ -4,7 +4,7 @@
     <h1>Character Build Data</h1>
     <p>App: @Model.BuiltWith.App</p>
     <p>Version: @Model.BuiltWith.Version</p>
-    <p>Class: @Model.Class</p>
+    <p>Class: @Model.ClassDisplay</p>
     <p>Origin: @Model.Origin</p>
     <p>Alignment: @Model.Alignment</p>
     <p>Name: @Model.Name</p>
@@ -13,26 +13,26 @@
     <div class="row mt-4">
         <div class="col-4">
             <h2>Primary Powers</h2>
-            @foreach (var powerSet in Model.PowerSets.Where(ps => ps.StartsWith("Brute_Melee")))
+            @foreach (var powerSet in Model.PowerSets.Where(ps => ps.Type == CBD.Enums.PowerSetType.Primary))
             {
                 <div class="card my-2">
                     <div class="card-header">
                         <h5 class="mb-0">
                             <button class="btn btn-link" data-bs-toggle="collapse" data-bs-target="#powerSet@powerSet">
-                                Power Set: @powerSet
+                                @powerSet.NameDisplay
                             </button>
                         </h5>
                     </div>
 
                     <div id="powerSet@powerSet" class="collapse">
                         <div class="card-body">
-                            @foreach (var powerEntry in Model.PowerEntries.Where(pe => pe.PowerName.StartsWith(powerSet)))
+                            @foreach (var powerEntry in Model.PowerEntries.Where(pe => pe.PowerSetType == CBD.Enums.PowerSetType.Primary))
                             {
                                 <div class="card my-2">
                                     <div class="card-header">
                                         <h5 class="mb-0">
                                             <button class="btn btn-link" data-bs-toggle="collapse" data-bs-target="#powerEntry@powerEntry.PowerName">
-                                                Power Name: @powerEntry.PowerName
+                                                 @powerEntry.PowerNameDisplay
                                             </button>
                                         </h5>
                                     </div>
@@ -62,26 +62,26 @@
         </div>
         <div class="col-4">
             <h2>Secondary Powers</h2>
-            @foreach (var powerSet in Model.PowerSets.Where(ps => ps.StartsWith("Brute_Defense")))
+            @foreach (var powerSet in Model.PowerSets.Where(ps => ps.Type == CBD.Enums.PowerSetType.Secondary))
             {
                 <div class="card my-2">
                     <div class="card-header">
                         <h5 class="mb-0">
                             <button class="btn btn-link" data-bs-toggle="collapse" data-bs-target="#powerSet@powerSet">
-                                Power Set: @powerSet
+                                @powerSet.NameDisplay
                             </button>
                         </h5>
                     </div>
 
                     <div id="powerSet@powerSet" class="collapse">
                         <div class="card-body">
-                            @foreach (var powerEntry in Model.PowerEntries.Where(pe => pe.PowerName.StartsWith(powerSet)))
+                            @foreach (var powerEntry in Model.PowerEntries.Where(pe => pe.PowerSetType == CBD.Enums.PowerSetType.Secondary))
                             {
                                 <div class="card my-2">
                                     <div class="card-header">
                                         <h5 class="mb-0">
                                             <button class="btn btn-link" data-bs-toggle="collapse" data-bs-target="#powerEntry@powerEntry.PowerName">
-                                                Power Name: @powerEntry.PowerName
+                                                @powerEntry.PowerNameDisplay
                                             </button>
                                         </h5>
                                     </div>
@@ -113,26 +113,26 @@
             <h2>Mastery/Epic Powers</h2>
             <div class="row mt-4">
                 <div class="col">
-                    @foreach (var powerSet in Model.PowerSets.Where(ps => ps.Contains("mastery_") || ps.Contains("Epic")))
+                    @foreach (var powerSet in Model.PowerSets.Where(ps => ps.Type == CBD.Enums.PowerSetType.Epic))
                     {
                         <div class="card my-2">
                             <div class="card-header">
                                 <h5 class="mb-0">
                                     <button class="btn btn-link" data-bs-toggle="collapse" data-bs-target="#powerSet@powerSet">
-                                        Power Set: @powerSet
+                                        @powerSet.NameDisplay
                                     </button>
                                 </h5>
                             </div>
 
                             <div id="powerSet@powerSet" class="collapse">
                                 <div class="card-body">
-                                    @foreach (var powerEntry in Model.PowerEntries.Where(pe => pe.PowerName.StartsWith(powerSet)))
+                                    @foreach (var powerEntry in Model.PowerEntries.Where(pe => pe.PowerSetType == CBD.Enums.PowerSetType.Epic))
                                     {
                                         <div class="card my-2">
                                             <div class="card-header">
                                                 <h5 class="mb-0">
                                                     <button class="btn btn-link" data-bs-toggle="collapse" data-bs-target="#powerEntry@powerEntry.PowerName">
-                                                        Power Name: @powerEntry.PowerName
+                                                         @powerEntry.PowerNameDisplay
                                                     </button>
                                                 </h5>
                                             </div>
@@ -165,26 +165,26 @@
             <h2>Pool Powers</h2>
             <div class="row mt-4">
                 <div class="col">
-                    @foreach (var powerSet in Model.PowerSets.Where(ps => ps.StartsWith("Pool")))
+                    @foreach (var powerSet in Model.PowerSets.Where(ps => ps.Type == CBD.Enums.PowerSetType.Pool))
                     {
                         <div class="card my-2">
                             <div class="card-header">
                                 <h5 class="mb-0">
                                     <button class="btn btn-link" data-bs-toggle="collapse" data-bs-target="#powerSet@powerSet">
-                                        Power Set: @powerSet
+                                        @powerSet.NameDisplay
                                     </button>
                                 </h5>
                             </div>
 
                             <div id="powerSet@powerSet" class="collapse">
                                 <div class="card-body">
-                                    @foreach (var powerEntry in Model.PowerEntries.Where(pe => pe.PowerName.StartsWith(powerSet)))
+                                    @foreach (var powerEntry in Model.PowerEntries.Where(pe => pe.PowerSetType == CBD.Enums.PowerSetType.Pool))
                                     {
                                         <div class="card my-2">
                                             <div class="card-header">
                                                 <h5 class="mb-0">
                                                     <button class="btn btn-link" data-bs-toggle="collapse" data-bs-target="#powerEntry@powerEntry.PowerName">
-                                                        Power Name: @powerEntry.PowerName
+                                                         @powerEntry.PowerNameDisplay
                                                     </button>
                                                 </h5>
                                             </div>
@@ -217,26 +217,26 @@
             <h2>Inherent Powers</h2>
             <div class="row mt-4">
                 <div class="col">
-                    @foreach (var powerSet in Model.PowerSets.Where(ps => ps.StartsWith("Inherent")))
+                    @foreach (var powerSet in Model.PowerSets.Where(ps => ps.Type == CBD.Enums.PowerSetType.Inherent))
                     {
                         <div class="card my-2">
                             <div class="card-header">
                                 <h5 class="mb-0">
                                     <button class="btn btn-link" data-bs-toggle="collapse" data-bs-target="#powerSet@powerSet">
-                                        Power Set: @powerSet
+                                        @powerSet.NameDisplay
                                     </button>
                                 </h5>
                             </div>
 
                             <div id="powerSet@powerSet" class="collapse">
                                 <div class="card-body">
-                                    @foreach (var powerEntry in Model.PowerEntries.Where(pe => pe.PowerName.StartsWith(powerSet)))
+                                    @foreach (var powerEntry in Model.PowerEntries.Where(pe => pe.PowerSetType == CBD.Enums.PowerSetType.Inherent))
                                     {
                                         <div class="card my-2">
                                             <div class="card-header">
                                                 <h5 class="mb-0">
                                                     <button class="btn btn-link" data-bs-toggle="collapse" data-bs-target="#powerEntry@powerEntry.PowerName">
-                                                        Power Name: @powerEntry.PowerName
+                                                         @powerEntry.PowerNameDisplay
                                                     </button>
                                                 </h5>
                                             </div>
