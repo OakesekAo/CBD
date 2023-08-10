@@ -10,9 +10,10 @@ namespace CBD.Data
             : base(options)
         {
         }
-        public DbSet<CBD.Models.Build>? Build { get; set; }
+        public DbSet<CBD.Models.BuildOld>? BuildOld { get; set; }
         public DbSet<CBD.Models.Comment>? Comment { get; set; }
         public DbSet<CBD.Models.Server>? Server { get; set; }
         public DbSet<CBD.Models.Tag>? Tag { get; set; }
+        public DbSet<CBD.Models.Build>? Build { get; set; }
     }
 }

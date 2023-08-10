@@ -19,7 +19,7 @@ namespace CBD.Models
 
         [Display(Name = "@Global")]
         [StringLength(50, ErrorMessage = "The {0} must be at least {2} and a max of {1} characters long", MinimumLength = 4)]
-        public string GlobalName { get; set; }
+        public string? GlobalName { get; set; }
 
 
         [Display(Name = "Avatar Image")]

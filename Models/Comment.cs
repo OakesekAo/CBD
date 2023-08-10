@@ -7,7 +7,7 @@ namespace CBD.Models
     {
         public int Id { get; set; }
         public int BuildId { get; set; }
-        public string AuthorId { get; set; }
+        public string CBDUserId { get; set; }
         public string ModeratorId { get; set; }
 
         [Required]
@@ -42,7 +42,7 @@ namespace CBD.Models
 
         //Navigation Properties
         public virtual Build Build { get; set; }
-        public virtual CBDUser Author { get; set; }
+        public virtual CBDUser CBDUser { get; set; }
         public virtual CBDUser Moderator { get; set; }
     }
 }

@@ -22,7 +22,7 @@ namespace CBD.Controllers
         // GET: Builds
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Build.Include(b => b.Author).Include(b => b.Server);
+            var applicationDbContext = _context.Build.Include(b => b.CBDUser).Include(b => b.Server);
             return View(await applicationDbContext.ToListAsync());
         }
 
@@ -35,7 +35,7 @@ namespace CBD.Controllers
             }
 
             var build = await _context.Build
-                .Include(b => b.Author)
+                .Include(b => b.CBDUser)
                 .Include(b => b.Server)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (build == null)
@@ -49,7 +49,7 @@ namespace CBD.Controllers
         // GET: Builds/Create
         public IActionResult Create()
         {
-            ViewData["AuthorId"] = new SelectList(_context.Users, "Id", "Id");
+            ViewData["CBDUserId"] = new SelectList(_context.Users, "Id", "Id");
             ViewData["ServerId"] = new SelectList(_context.Server, "Id", "Description");
             return View();
         }
@@ -59,7 +59,7 @@ namespace CBD.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,ServerId,AuthorId,Created,Updated,ReadyStatus,ImageData,ContentType")] Build build)
+        public async Task<IActionResult> Create([Bind("Id,ServerId,CBDUserId,Created,Updated,ReadyStatus,ImageData,ContentType,Class,ClassDisplay,Origin,Alignment,Name,Comment,LastPower,RawJson")] Build build)
         {
             if (ModelState.IsValid)
             {
@@ -67,7 +67,7 @@ namespace CBD.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["AuthorId"] = new SelectList(_context.Users, "Id", "Id", build.AuthorId);
+            ViewData["CBDUserId"] = new SelectList(_context.Users, "Id", "Id", build.CBDUserId);
             ViewData["ServerId"] = new SelectList(_context.Server, "Id", "Description", build.ServerId);
             return View(build);
         }
@@ -85,7 +85,7 @@ namespace CBD.Controllers
             {
                 return NotFound();
             }
-            ViewData["AuthorId"] = new SelectList(_context.Users, "Id", "Id", build.AuthorId);
+            ViewData["CBDUserId"] = new SelectList(_context.Users, "Id", "Id", build.CBDUserId);
             ViewData["ServerId"] = new SelectList(_context.Server, "Id", "Description", build.ServerId);
             return View(build);
         }
@@ -95,7 +95,7 @@ namespace CBD.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,ServerId,AuthorId,Created,Updated,ReadyStatus,ImageData,ContentType")] Build build)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,ServerId,CBDUserId,Created,Updated,ReadyStatus,ImageData,ContentType,Class,ClassDisplay,Origin,Alignment,Name,Comment,LastPower,RawJson")] Build build)
         {
             if (id != build.Id)
             {
@@ -122,7 +122,7 @@ namespace CBD.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["AuthorId"] = new SelectList(_context.Users, "Id", "Id", build.AuthorId);
+            ViewData["CBDUserId"] = new SelectList(_context.Users, "Id", "Id", build.CBDUserId);
             ViewData["ServerId"] = new SelectList(_context.Server, "Id", "Description", build.ServerId);
             return View(build);
         }
@@ -136,7 +136,7 @@ namespace CBD.Controllers
             }
 
             var build = await _context.Build
-                .Include(b => b.Author)
+                .Include(b => b.CBDUser)
                 .Include(b => b.Server)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (build == null)

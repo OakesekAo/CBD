@@ -22,7 +22,7 @@ namespace CBD.Controllers
         // GET: Servers
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Server.Include(s => s.Author);
+            var applicationDbContext = _context.Server.Include(s => s.CBDUser);
             return View(await applicationDbContext.ToListAsync());
         }
 
@@ -35,7 +35,7 @@ namespace CBD.Controllers
             }
 
             var server = await _context.Server
-                .Include(s => s.Author)
+                .Include(s => s.CBDUser)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (server == null)
             {
@@ -48,7 +48,7 @@ namespace CBD.Controllers
         // GET: Servers/Create
         public IActionResult Create()
         {
-            ViewData["AuthorId"] = new SelectList(_context.Users, "Id", "Id");
+            ViewData["CBDUserId"] = new SelectList(_context.Users, "Id", "Id");
             return View();
         }
 
@@ -57,7 +57,7 @@ namespace CBD.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,AuthorId,Name,Description,Created,Updated,ImageData,ContentType")] Server server)
+        public async Task<IActionResult> Create([Bind("Id,CBDUserId,Name,Description,Created,Updated,ImageData,ContentType")] Server server)
         {
             if (ModelState.IsValid)
             {
@@ -65,7 +65,7 @@ namespace CBD.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["AuthorId"] = new SelectList(_context.Users, "Id", "Id", server.AuthorId);
+            ViewData["CBDUserId"] = new SelectList(_context.Users, "Id", "Id", server.CBDUserId);
             return View(server);
         }
 
@@ -82,7 +82,7 @@ namespace CBD.Controllers
             {
                 return NotFound();
             }
-            ViewData["AuthorId"] = new SelectList(_context.Users, "Id", "Id", server.AuthorId);
+            ViewData["CBDUserId"] = new SelectList(_context.Users, "Id", "Id", server.CBDUserId);
             return View(server);
         }
 
@@ -91,7 +91,7 @@ namespace CBD.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,AuthorId,Name,Description,Created,Updated,ImageData,ContentType")] Server server)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,CBDUserId,Name,Description,Created,Updated,ImageData,ContentType")] Server server)
         {
             if (id != server.Id)
             {
@@ -118,7 +118,7 @@ namespace CBD.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["AuthorId"] = new SelectList(_context.Users, "Id", "Id", server.AuthorId);
+            ViewData["CBDUserId"] = new SelectList(_context.Users, "Id", "Id", server.CBDUserId);
             return View(server);
         }
 
@@ -131,7 +131,7 @@ namespace CBD.Controllers
             }
 
             var server = await _context.Server
-                .Include(s => s.Author)
+                .Include(s => s.CBDUser)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (server == null)
             {

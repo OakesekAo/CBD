@@ -1,14 +1,19 @@
-﻿@model CharBuildJsonRaw.Build
+﻿@using System.Text;
+@model Build
 
 <div class="container mt-4">
     <h1>Character Build Data</h1>
     <p>App: @Model.BuiltWith.App</p>
     <p>Version: @Model.BuiltWith.Version</p>
     <p>Class: @Model.ClassDisplay</p>
-    <p>Origin: @Model.Origin</p>
-    <p>Alignment: @Model.Alignment</p>
     <p>Name: @Model.Name</p>
     <p>Comment: @Model.Comment</p>
+
+
+<!-- ... (other HTML content) ... -->
+
+<a href="data:application/json;base64,@Convert.ToBase64String(Encoding.UTF8.GetBytes(Model.RawJson))" download="@($"{Model.Class}_{Model.Name.Replace(" ", "_")}.mbd")">Download Build</a>
+
 
     <div class="row mt-4">
         <div class="col-4">

@@ -4,7 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Diagnostics;
-using static CBD.Models.CharBuildJsonRaw;
+using System.Text;
+using static CBD.Models.Build;
 
 namespace CBD.Controllers
 {
@@ -50,8 +51,10 @@ namespace CBD.Controllers
             {
                 Converters = { new PowerSetsConverter() } // Register a custom converter for PowerSets
             };
-            CharBuildJsonRaw.Build charBuildData = JsonConvert.DeserializeObject<CharBuildJsonRaw.Build>(jsonData, settings);
+            Build charBuildData = JsonConvert.DeserializeObject<Build>(jsonData, settings);
 
+            // Assign the raw JSON to the property
+            charBuildData.RawJson = jsonData;
 
 
             // Step 3: Modify properties
@@ -85,45 +88,62 @@ namespace CBD.Controllers
 
             foreach (var powerEntry in charBuildData.PowerEntries)
             {
-                // Get the prefix before the second "."
-                //string[] parts = powerEntry.PowerName.Split('.');
-                //string rawPowerNamePrefix = string.Join(".", parts[0], parts[1]);
-                string rawPowerNamePrefix = string.Join(".", powerEntry.PowerName.Split('.').Take(2));
-
-
-                // Strip the prefix and replace '_' with ' ' to create PowerNameDisplay
-                //string rawPowerNameMid = powerEntry.PowerName.Split('.')[1];
-                //string rawPowerNameDisplay = rawPowerNameMid.Replace("_", " ");
-                string rawPowerNameDisplay = powerEntry.PowerName.Split('.')[2].Replace("_", " ");
-
-
-                // Determine the PowerSetType based on the raw power name
-                PowerSetType powerSetType;
-                if (charBuildData.PowerSets[0].Name == rawPowerNamePrefix)
+                // Check if the PowerName is not empty or whitespace
+                if (!string.IsNullOrWhiteSpace(powerEntry.PowerName))
                 {
-                    powerSetType = PowerSetType.Primary;
-                }
-                else if (charBuildData.PowerSets[1].Name == rawPowerNamePrefix)
-                {
-                    powerSetType = PowerSetType.Secondary;
-                }
-                else if (charBuildData.PowerSets[3].Name == rawPowerNamePrefix)
-                {
-                    powerSetType = PowerSetType.Pool;
-                }
-                else
-                {
-                    powerSetType = PowerSetType.Epic;
-                }
+                    // Get the prefix before the second "."
+                    //string[] parts = powerEntry.PowerName.Split('.');
+                    //string rawPowerNamePrefix = string.Join(".", parts[0], parts[1]);
+                    string rawPowerNamePrefix = string.Join(".", powerEntry.PowerName.Split('.').Take(2));
 
-                // Assign the values
-                powerEntry.PowerNameDisplay = rawPowerNameDisplay;
-                powerEntry.PowerSetType = powerSetType;
+
+                    // Strip the prefix and replace '_' with ' ' to create PowerNameDisplay
+                    //string rawPowerNameMid = powerEntry.PowerName.Split('.')[1];
+                    //string rawPowerNameDisplay = rawPowerNameMid.Replace("_", " ");
+                    //string rawPowerNameDisplay = powerEntry.PowerName.Split('.')[2].Replace("_", " ");
+                    string[] parts = powerEntry.PowerName.Split('.');
+                    string rawPowerNameDisplay = parts.Length > 2 ? parts[2].Replace("_", " ") : parts[1];
+
+
+
+                    // Determine the PowerSetType based on the raw power name
+                    PowerSetType powerSetType;
+                    if (charBuildData.PowerSets[0].Name == rawPowerNamePrefix)
+                    {
+                        powerSetType = PowerSetType.Primary;
+                    }
+                    else if (charBuildData.PowerSets[1].Name == rawPowerNamePrefix)
+                    {
+                        powerSetType = PowerSetType.Secondary;
+                    }
+                    else if (charBuildData.PowerSets[3].Name == rawPowerNamePrefix)
+                    {
+                        powerSetType = PowerSetType.Pool;
+                    }
+                    else
+                    {
+                        powerSetType = PowerSetType.Epic;
+                    }
+
+                    // Assign the values
+                    powerEntry.PowerNameDisplay = rawPowerNameDisplay;
+                    powerEntry.PowerSetType = powerSetType;
+                }
             }
 
-            // Step 4: Pass the modified data to the view
+            // Step 4: Pass the modified data and filename to the view
+            ViewBag.Filename = $"{charBuildData.Class}_{charBuildData.Name.Replace(" ", "_")}";
             return View(charBuildData);
         }
+
+        public IActionResult DownloadRawJson(string rawData, string filename)
+        {
+            // Set the content type and return the raw JSON data as a file
+            return File(Encoding.UTF8.GetBytes(rawData), "application/json", $"{filename}.json");
+        }
+
+
+
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

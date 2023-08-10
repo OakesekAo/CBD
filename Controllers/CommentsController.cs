@@ -22,7 +22,7 @@ namespace CBD.Controllers
         // GET: Comments
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Comment.Include(c => c.Author).Include(c => c.Build).Include(c => c.Moderator);
+            var applicationDbContext = _context.Comment.Include(c => c.Build).Include(c => c.CBDUser).Include(c => c.Moderator);
             return View(await applicationDbContext.ToListAsync());
         }
 
@@ -35,8 +35,8 @@ namespace CBD.Controllers
             }
 
             var comment = await _context.Comment
-                .Include(c => c.Author)
                 .Include(c => c.Build)
+                .Include(c => c.CBDUser)
                 .Include(c => c.Moderator)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (comment == null)
@@ -50,8 +50,8 @@ namespace CBD.Controllers
         // GET: Comments/Create
         public IActionResult Create()
         {
-            ViewData["AuthorId"] = new SelectList(_context.Users, "Id", "Id");
             ViewData["BuildId"] = new SelectList(_context.Build, "Id", "Id");
+            ViewData["CBDUserId"] = new SelectList(_context.Users, "Id", "Id");
             ViewData["ModeratorId"] = new SelectList(_context.Users, "Id", "Id");
             return View();
         }
@@ -61,7 +61,7 @@ namespace CBD.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,BuildId,AuthorId,ModeratorId,Body,Created,Updated,Moderated,Deleted,ModeratedBody,ModerationType")] Comment comment)
+        public async Task<IActionResult> Create([Bind("Id,BuildId,CBDUserId,ModeratorId,Body,Created,Updated,Moderated,Deleted,ModeratedBody,ModerationType")] Comment comment)
         {
             if (ModelState.IsValid)
             {
@@ -69,8 +69,8 @@ namespace CBD.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["AuthorId"] = new SelectList(_context.Users, "Id", "Id", comment.AuthorId);
             ViewData["BuildId"] = new SelectList(_context.Build, "Id", "Id", comment.BuildId);
+            ViewData["CBDUserId"] = new SelectList(_context.Users, "Id", "Id", comment.CBDUserId);
             ViewData["ModeratorId"] = new SelectList(_context.Users, "Id", "Id", comment.ModeratorId);
             return View(comment);
         }
@@ -88,8 +88,8 @@ namespace CBD.Controllers
             {
                 return NotFound();
             }
-            ViewData["AuthorId"] = new SelectList(_context.Users, "Id", "Id", comment.AuthorId);
             ViewData["BuildId"] = new SelectList(_context.Build, "Id", "Id", comment.BuildId);
+            ViewData["CBDUserId"] = new SelectList(_context.Users, "Id", "Id", comment.CBDUserId);
             ViewData["ModeratorId"] = new SelectList(_context.Users, "Id", "Id", comment.ModeratorId);
             return View(comment);
         }
@@ -99,7 +99,7 @@ namespace CBD.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,BuildId,AuthorId,ModeratorId,Body,Created,Updated,Moderated,Deleted,ModeratedBody,ModerationType")] Comment comment)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,BuildId,CBDUserId,ModeratorId,Body,Created,Updated,Moderated,Deleted,ModeratedBody,ModerationType")] Comment comment)
         {
             if (id != comment.Id)
             {
@@ -126,8 +126,8 @@ namespace CBD.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["AuthorId"] = new SelectList(_context.Users, "Id", "Id", comment.AuthorId);
             ViewData["BuildId"] = new SelectList(_context.Build, "Id", "Id", comment.BuildId);
+            ViewData["CBDUserId"] = new SelectList(_context.Users, "Id", "Id", comment.CBDUserId);
             ViewData["ModeratorId"] = new SelectList(_context.Users, "Id", "Id", comment.ModeratorId);
             return View(comment);
         }
@@ -141,8 +141,8 @@ namespace CBD.Controllers
             }
 
             var comment = await _context.Comment
-                .Include(c => c.Author)
                 .Include(c => c.Build)
+                .Include(c => c.CBDUser)
                 .Include(c => c.Moderator)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (comment == null)
