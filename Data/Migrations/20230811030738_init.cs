@@ -6,7 +6,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace CBD.Data.Migrations
 {
-    public partial class Init : Migration
+    public partial class init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -31,9 +31,10 @@ namespace CBD.Data.Migrations
                     Id = table.Column<string>(type: "text", nullable: false),
                     FirstName = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                     LastName = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
-                    GlobalName = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
-                    ImageData = table.Column<byte[]>(type: "bytea", nullable: false),
-                    ContentType = table.Column<string>(type: "text", nullable: false),
+                    GlobalName = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
+                    AvatarFileName = table.Column<string>(type: "text", nullable: true),
+                    AvatarFileData = table.Column<byte[]>(type: "bytea", nullable: true),
+                    AvatarContentType = table.Column<string>(type: "text", nullable: true),
                     UserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
@@ -52,6 +53,39 @@ namespace CBD.Data.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Builtwith",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    App = table.Column<string>(type: "text", nullable: false),
+                    Version = table.Column<string>(type: "text", nullable: false),
+                    Database = table.Column<string>(type: "text", nullable: false),
+                    DatabaseVersion = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Builtwith", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Enhancement",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    EnhancementName = table.Column<string>(type: "text", nullable: false),
+                    Grade = table.Column<string>(type: "text", nullable: false),
+                    IoLevel = table.Column<int>(type: "integer", nullable: false),
+                    RelativeLevel = table.Column<string>(type: "text", nullable: false),
+                    Obtained = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Enhancement", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -166,7 +200,7 @@ namespace CBD.Data.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    AuthorId = table.Column<string>(type: "text", nullable: false),
+                    CBDUserId = table.Column<string>(type: "text", nullable: false),
                     Name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     Description = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
                     Created = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
@@ -178,8 +212,8 @@ namespace CBD.Data.Migrations
                 {
                     table.PrimaryKey("PK_Server", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Server_AspNetUsers_AuthorId",
-                        column: x => x.AuthorId,
+                        name: "FK_Server_AspNetUsers_CBDUserId",
+                        column: x => x.CBDUserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -187,6 +221,52 @@ namespace CBD.Data.Migrations
 
             migrationBuilder.CreateTable(
                 name: "Build",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    ServerId = table.Column<int>(type: "integer", nullable: false),
+                    CBDUserId = table.Column<string>(type: "text", nullable: false),
+                    Created = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Updated = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ReadyStatus = table.Column<int>(type: "integer", nullable: false),
+                    ImageData = table.Column<byte[]>(type: "bytea", nullable: false),
+                    ContentType = table.Column<string>(type: "text", nullable: false),
+                    BuiltWithId = table.Column<int>(type: "integer", nullable: false),
+                    Class = table.Column<string>(type: "text", nullable: false),
+                    ClassDisplay = table.Column<string>(type: "text", nullable: false),
+                    Origin = table.Column<string>(type: "text", nullable: false),
+                    Alignment = table.Column<string>(type: "text", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    Comment = table.Column<string>(type: "text", nullable: false),
+                    LastPower = table.Column<int>(type: "integer", nullable: false),
+                    RawJson = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Build", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Build_AspNetUsers_CBDUserId",
+                        column: x => x.CBDUserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Build_Builtwith_BuiltWithId",
+                        column: x => x.BuiltWithId,
+                        principalTable: "Builtwith",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Build_Server_ServerId",
+                        column: x => x.ServerId,
+                        principalTable: "Server",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "BuildOld",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -201,19 +281,66 @@ namespace CBD.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Build", x => x.Id);
+                    table.PrimaryKey("PK_BuildOld", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Build_AspNetUsers_AuthorId",
+                        name: "FK_BuildOld_AspNetUsers_AuthorId",
                         column: x => x.AuthorId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Build_Server_ServerId",
+                        name: "FK_BuildOld_Server_ServerId",
                         column: x => x.ServerId,
                         principalTable: "Server",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Powerentry",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    PowerName = table.Column<string>(type: "text", nullable: false),
+                    PowerNameDisplay = table.Column<string>(type: "text", nullable: false),
+                    PowerSetType = table.Column<int>(type: "integer", nullable: false),
+                    Level = table.Column<int>(type: "integer", nullable: false),
+                    StatInclude = table.Column<bool>(type: "boolean", nullable: false),
+                    ProcInclude = table.Column<bool>(type: "boolean", nullable: false),
+                    VariableValue = table.Column<int>(type: "integer", nullable: false),
+                    InherentSlotsUsed = table.Column<int>(type: "integer", nullable: false),
+                    BuildId = table.Column<int>(type: "integer", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Powerentry", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Powerentry_Build_BuildId",
+                        column: x => x.BuildId,
+                        principalTable: "Build",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PowerSets",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    NameDisplay = table.Column<string>(type: "text", nullable: false),
+                    Type = table.Column<int>(type: "integer", nullable: false),
+                    BuildId = table.Column<int>(type: "integer", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PowerSets", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PowerSets_Build_BuildId",
+                        column: x => x.BuildId,
+                        principalTable: "Build",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -223,7 +350,7 @@ namespace CBD.Data.Migrations
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     BuildId = table.Column<int>(type: "integer", nullable: false),
-                    AuthorId = table.Column<string>(type: "text", nullable: false),
+                    CBDUserId = table.Column<string>(type: "text", nullable: false),
                     ModeratorId = table.Column<string>(type: "text", nullable: false),
                     Body = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
                     Created = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
@@ -231,14 +358,15 @@ namespace CBD.Data.Migrations
                     Moderated = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     Deleted = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     ModeratedBody = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
-                    ModerationType = table.Column<int>(type: "integer", nullable: false)
+                    ModerationType = table.Column<int>(type: "integer", nullable: false),
+                    BuildOldId = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Comment", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Comment_AspNetUsers_AuthorId",
-                        column: x => x.AuthorId,
+                        name: "FK_Comment_AspNetUsers_CBDUserId",
+                        column: x => x.CBDUserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -254,6 +382,11 @@ namespace CBD.Data.Migrations
                         principalTable: "Build",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Comment_BuildOld_BuildOldId",
+                        column: x => x.BuildOldId,
+                        principalTable: "BuildOld",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -263,15 +396,16 @@ namespace CBD.Data.Migrations
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     BuildId = table.Column<int>(type: "integer", nullable: false),
-                    AuthorId = table.Column<string>(type: "text", nullable: false),
-                    Text = table.Column<string>(type: "character varying(25)", maxLength: 25, nullable: false)
+                    CBDUserId = table.Column<string>(type: "text", nullable: false),
+                    Text = table.Column<string>(type: "character varying(25)", maxLength: 25, nullable: false),
+                    BuildOldId = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Tag", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Tag_AspNetUsers_AuthorId",
-                        column: x => x.AuthorId,
+                        name: "FK_Tag_AspNetUsers_CBDUserId",
+                        column: x => x.CBDUserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -281,6 +415,38 @@ namespace CBD.Data.Migrations
                         principalTable: "Build",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Tag_BuildOld_BuildOldId",
+                        column: x => x.BuildOldId,
+                        principalTable: "BuildOld",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Slotentry",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Level = table.Column<int>(type: "integer", nullable: false),
+                    IsInherent = table.Column<bool>(type: "boolean", nullable: false),
+                    EnhancementId = table.Column<int>(type: "integer", nullable: false),
+                    PowerentryId = table.Column<int>(type: "integer", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Slotentry", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Slotentry_Enhancement_EnhancementId",
+                        column: x => x.EnhancementId,
+                        principalTable: "Enhancement",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Slotentry_Powerentry_PowerentryId",
+                        column: x => x.PowerentryId,
+                        principalTable: "Powerentry",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateIndex(
@@ -321,9 +487,14 @@ namespace CBD.Data.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Build_AuthorId",
+                name: "IX_Build_BuiltWithId",
                 table: "Build",
-                column: "AuthorId");
+                column: "BuiltWithId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Build_CBDUserId",
+                table: "Build",
+                column: "CBDUserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Build_ServerId",
@@ -331,9 +502,14 @@ namespace CBD.Data.Migrations
                 column: "ServerId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Comment_AuthorId",
-                table: "Comment",
+                name: "IX_BuildOld_AuthorId",
+                table: "BuildOld",
                 column: "AuthorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_BuildOld_ServerId",
+                table: "BuildOld",
+                column: "ServerId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Comment_BuildId",
@@ -341,24 +517,59 @@ namespace CBD.Data.Migrations
                 column: "BuildId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Comment_BuildOldId",
+                table: "Comment",
+                column: "BuildOldId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Comment_CBDUserId",
+                table: "Comment",
+                column: "CBDUserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Comment_ModeratorId",
                 table: "Comment",
                 column: "ModeratorId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Server_AuthorId",
-                table: "Server",
-                column: "AuthorId");
+                name: "IX_Powerentry_BuildId",
+                table: "Powerentry",
+                column: "BuildId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Tag_AuthorId",
-                table: "Tag",
-                column: "AuthorId");
+                name: "IX_PowerSets_BuildId",
+                table: "PowerSets",
+                column: "BuildId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Server_CBDUserId",
+                table: "Server",
+                column: "CBDUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Slotentry_EnhancementId",
+                table: "Slotentry",
+                column: "EnhancementId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Slotentry_PowerentryId",
+                table: "Slotentry",
+                column: "PowerentryId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Tag_BuildId",
                 table: "Tag",
                 column: "BuildId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Tag_BuildOldId",
+                table: "Tag",
+                column: "BuildOldId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Tag_CBDUserId",
+                table: "Tag",
+                column: "CBDUserId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -382,13 +593,31 @@ namespace CBD.Data.Migrations
                 name: "Comment");
 
             migrationBuilder.DropTable(
+                name: "PowerSets");
+
+            migrationBuilder.DropTable(
+                name: "Slotentry");
+
+            migrationBuilder.DropTable(
                 name: "Tag");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
+                name: "Enhancement");
+
+            migrationBuilder.DropTable(
+                name: "Powerentry");
+
+            migrationBuilder.DropTable(
+                name: "BuildOld");
+
+            migrationBuilder.DropTable(
                 name: "Build");
+
+            migrationBuilder.DropTable(
+                name: "Builtwith");
 
             migrationBuilder.DropTable(
                 name: "Server");

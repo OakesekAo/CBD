@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CBD.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230805010842_Init")]
-    partial class Init
+    [Migration("20230811030738_init")]
+    partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -25,6 +25,83 @@ namespace CBD.Data.Migrations
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("CBD.Models.Build", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Alignment")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("BuiltWithId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("CBDUserId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Class")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("ClassDisplay")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Comment")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("ContentType")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<byte[]>("ImageData")
+                        .IsRequired()
+                        .HasColumnType("bytea");
+
+                    b.Property<int>("LastPower")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Origin")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("RawJson")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("ReadyStatus")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("ServerId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("Updated")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BuiltWithId");
+
+                    b.HasIndex("CBDUserId");
+
+                    b.HasIndex("ServerId");
+
+                    b.ToTable("Build");
+                });
+
+            modelBuilder.Entity("CBD.Models.BuildOld", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -62,7 +139,36 @@ namespace CBD.Data.Migrations
 
                     b.HasIndex("ServerId");
 
-                    b.ToTable("Build");
+                    b.ToTable("BuildOld");
+                });
+
+            modelBuilder.Entity("CBD.Models.Builtwith", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("App")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Database")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("DatabaseVersion")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Version")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Builtwith");
                 });
 
             modelBuilder.Entity("CBD.Models.CBDUser", b =>
@@ -73,12 +179,17 @@ namespace CBD.Data.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("integer");
 
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
+                    b.Property<string>("AvatarContentType")
                         .HasColumnType("text");
 
-                    b.Property<string>("ContentType")
-                        .IsRequired()
+                    b.Property<byte[]>("AvatarFileData")
+                        .HasColumnType("bytea");
+
+                    b.Property<string>("AvatarFileName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
                         .HasColumnType("text");
 
                     b.Property<string>("Email")
@@ -94,13 +205,8 @@ namespace CBD.Data.Migrations
                         .HasColumnType("character varying(50)");
 
                     b.Property<string>("GlobalName")
-                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
-
-                    b.Property<byte[]>("ImageData")
-                        .IsRequired()
-                        .HasColumnType("bytea");
 
                     b.Property<string>("LastName")
                         .IsRequired()
@@ -160,10 +266,6 @@ namespace CBD.Data.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("AuthorId")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<string>("Body")
                         .IsRequired()
                         .HasMaxLength(500)
@@ -171,6 +273,13 @@ namespace CBD.Data.Migrations
 
                     b.Property<int>("BuildId")
                         .HasColumnType("integer");
+
+                    b.Property<int?>("BuildOldId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("CBDUserId")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("Created")
                         .HasColumnType("timestamp with time zone");
@@ -198,13 +307,119 @@ namespace CBD.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AuthorId");
-
                     b.HasIndex("BuildId");
+
+                    b.HasIndex("BuildOldId");
+
+                    b.HasIndex("CBDUserId");
 
                     b.HasIndex("ModeratorId");
 
                     b.ToTable("Comment");
+                });
+
+            modelBuilder.Entity("CBD.Models.Enhancement", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("EnhancementName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Grade")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("IoLevel")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("Obtained")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("RelativeLevel")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Enhancement");
+                });
+
+            modelBuilder.Entity("CBD.Models.Powerentry", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("BuildId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("InherentSlotsUsed")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Level")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("PowerName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("PowerNameDisplay")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("PowerSetType")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("ProcInclude")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("StatInclude")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("VariableValue")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BuildId");
+
+                    b.ToTable("Powerentry");
+                });
+
+            modelBuilder.Entity("CBD.Models.PowerSets", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("BuildId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("NameDisplay")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BuildId");
+
+                    b.ToTable("PowerSets");
                 });
 
             modelBuilder.Entity("CBD.Models.Server", b =>
@@ -215,7 +430,7 @@ namespace CBD.Data.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("AuthorId")
+                    b.Property<string>("CBDUserId")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -245,9 +460,38 @@ namespace CBD.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AuthorId");
+                    b.HasIndex("CBDUserId");
 
                     b.ToTable("Server");
+                });
+
+            modelBuilder.Entity("CBD.Models.Slotentry", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("EnhancementId")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("IsInherent")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("Level")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("PowerentryId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EnhancementId");
+
+                    b.HasIndex("PowerentryId");
+
+                    b.ToTable("Slotentry");
                 });
 
             modelBuilder.Entity("CBD.Models.Tag", b =>
@@ -258,12 +502,15 @@ namespace CBD.Data.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("AuthorId")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<int>("BuildId")
                         .HasColumnType("integer");
+
+                    b.Property<int?>("BuildOldId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("CBDUserId")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<string>("Text")
                         .IsRequired()
@@ -272,9 +519,11 @@ namespace CBD.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AuthorId");
-
                     b.HasIndex("BuildId");
+
+                    b.HasIndex("BuildOldId");
+
+                    b.HasIndex("CBDUserId");
 
                     b.ToTable("Tag");
                 });
@@ -413,14 +662,41 @@ namespace CBD.Data.Migrations
 
             modelBuilder.Entity("CBD.Models.Build", b =>
                 {
-                    b.HasOne("CBD.Models.CBDUser", "Author")
+                    b.HasOne("CBD.Models.Builtwith", "BuiltWith")
+                        .WithMany()
+                        .HasForeignKey("BuiltWithId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CBD.Models.CBDUser", "CBDUser")
                         .WithMany("Builds")
-                        .HasForeignKey("AuthorId")
+                        .HasForeignKey("CBDUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("CBD.Models.Server", "Server")
                         .WithMany("Builds")
+                        .HasForeignKey("ServerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("BuiltWith");
+
+                    b.Navigation("CBDUser");
+
+                    b.Navigation("Server");
+                });
+
+            modelBuilder.Entity("CBD.Models.BuildOld", b =>
+                {
+                    b.HasOne("CBD.Models.CBDUser", "Author")
+                        .WithMany()
+                        .HasForeignKey("AuthorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CBD.Models.Server", "Server")
+                        .WithMany()
                         .HasForeignKey("ServerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -432,15 +708,19 @@ namespace CBD.Data.Migrations
 
             modelBuilder.Entity("CBD.Models.Comment", b =>
                 {
-                    b.HasOne("CBD.Models.CBDUser", "Author")
-                        .WithMany()
-                        .HasForeignKey("AuthorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("CBD.Models.Build", "Build")
                         .WithMany("Comments")
                         .HasForeignKey("BuildId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CBD.Models.BuildOld", null)
+                        .WithMany("Comments")
+                        .HasForeignKey("BuildOldId");
+
+                    b.HasOne("CBD.Models.CBDUser", "CBDUser")
+                        .WithMany()
+                        .HasForeignKey("CBDUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -450,41 +730,74 @@ namespace CBD.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Author");
-
                     b.Navigation("Build");
+
+                    b.Navigation("CBDUser");
 
                     b.Navigation("Moderator");
                 });
 
+            modelBuilder.Entity("CBD.Models.Powerentry", b =>
+                {
+                    b.HasOne("CBD.Models.Build", null)
+                        .WithMany("PowerEntries")
+                        .HasForeignKey("BuildId");
+                });
+
+            modelBuilder.Entity("CBD.Models.PowerSets", b =>
+                {
+                    b.HasOne("CBD.Models.Build", null)
+                        .WithMany("PowerSets")
+                        .HasForeignKey("BuildId");
+                });
+
             modelBuilder.Entity("CBD.Models.Server", b =>
                 {
-                    b.HasOne("CBD.Models.CBDUser", "Author")
+                    b.HasOne("CBD.Models.CBDUser", "CBDUser")
                         .WithMany("Servers")
-                        .HasForeignKey("AuthorId")
+                        .HasForeignKey("CBDUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Author");
+                    b.Navigation("CBDUser");
+                });
+
+            modelBuilder.Entity("CBD.Models.Slotentry", b =>
+                {
+                    b.HasOne("CBD.Models.Enhancement", "Enhancement")
+                        .WithMany()
+                        .HasForeignKey("EnhancementId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CBD.Models.Powerentry", null)
+                        .WithMany("SlotEntries")
+                        .HasForeignKey("PowerentryId");
+
+                    b.Navigation("Enhancement");
                 });
 
             modelBuilder.Entity("CBD.Models.Tag", b =>
                 {
-                    b.HasOne("CBD.Models.CBDUser", "Author")
-                        .WithMany()
-                        .HasForeignKey("AuthorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("CBD.Models.Build", "Build")
                         .WithMany("Tags")
                         .HasForeignKey("BuildId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Author");
+                    b.HasOne("CBD.Models.BuildOld", null)
+                        .WithMany("Tags")
+                        .HasForeignKey("BuildOldId");
+
+                    b.HasOne("CBD.Models.CBDUser", "CBDUser")
+                        .WithMany()
+                        .HasForeignKey("CBDUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Build");
+
+                    b.Navigation("CBDUser");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -542,6 +855,17 @@ namespace CBD.Data.Migrations
                 {
                     b.Navigation("Comments");
 
+                    b.Navigation("PowerEntries");
+
+                    b.Navigation("PowerSets");
+
+                    b.Navigation("Tags");
+                });
+
+            modelBuilder.Entity("CBD.Models.BuildOld", b =>
+                {
+                    b.Navigation("Comments");
+
                     b.Navigation("Tags");
                 });
 
@@ -550,6 +874,11 @@ namespace CBD.Data.Migrations
                     b.Navigation("Builds");
 
                     b.Navigation("Servers");
+                });
+
+            modelBuilder.Entity("CBD.Models.Powerentry", b =>
+                {
+                    b.Navigation("SlotEntries");
                 });
 
             modelBuilder.Entity("CBD.Models.Server", b =>

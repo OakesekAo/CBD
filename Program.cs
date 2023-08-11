@@ -3,6 +3,7 @@ using CBD.Helpers;
 using CBD.Models;
 using CBD.Services;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 
 
@@ -23,8 +24,12 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
 //custom services
+builder.Services.AddScoped<IEmailSender, EmailService>();
 builder.Services.AddScoped<DataService>();
-                            
+//mail settings
+builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
+
+
 
 var app = builder.Build();
 var scope = app.Services.CreateScope();

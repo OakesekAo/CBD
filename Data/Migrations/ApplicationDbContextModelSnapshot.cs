@@ -177,12 +177,17 @@ namespace CBD.Data.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("integer");
 
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
+                    b.Property<string>("AvatarContentType")
                         .HasColumnType("text");
 
-                    b.Property<string>("ContentType")
-                        .IsRequired()
+                    b.Property<byte[]>("AvatarFileData")
+                        .HasColumnType("bytea");
+
+                    b.Property<string>("AvatarFileName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
                         .HasColumnType("text");
 
                     b.Property<string>("Email")
@@ -200,10 +205,6 @@ namespace CBD.Data.Migrations
                     b.Property<string>("GlobalName")
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
-
-                    b.Property<byte[]>("ImageData")
-                        .IsRequired()
-                        .HasColumnType("bytea");
 
                     b.Property<string>("LastName")
                         .IsRequired()

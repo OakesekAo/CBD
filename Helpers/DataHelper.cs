@@ -9,16 +9,6 @@ namespace CBD.Helpers
 {
     public class DataHelper
     {
-        private readonly ApplicationDbContext _dbContext;
-        private readonly RoleManager<IdentityRole> _roleManager;
-        private readonly UserManager<CBDUser> _userManager;
-
-        public DataHelper(ApplicationDbContext dbContext, RoleManager<IdentityRole> roleManager, UserManager<CBDUser> userManager)
-        {
-            _dbContext = dbContext;
-            _roleManager = roleManager;
-            _userManager = userManager;
-        }
 
         public static async Task ManageDataAsync(IServiceProvider svcProvider)
         {
@@ -26,41 +16,40 @@ namespace CBD.Helpers
 
             // get instance of the db application context
             var dbContextSvc = svcProvider.GetRequiredService<ApplicationDbContext>();
+            var roleManager = svcProvider.GetRequiredService<RoleManager<IdentityRole>>();
+            var userManager = svcProvider.GetRequiredService<UserManager<CBDUser>>();
 
             //Migrate DB -- update-database
             await dbContextSvc.Database.MigrateAsync();
 
-            // Create an instance of DataHelper
-            var dataHelper = new DataHelper(_dbContext, _roleManager, _userManager);
 
             // Call the instance methods
-            await dataHelper.SeedRolesAsync();
-            await dataHelper.SeedUsersAsync();
+            if (!dbContextSvc.Roles.Any())
+            {
+                await SeedRolesAsync(roleManager);
+            }
+
+            //Check for users, if any, do nothing
+            if (!dbContextSvc.Users.Any())
+            {
+            await SeedUsersAsync(userManager);                
+            }
 
         }
 
 
-        private async Task SeedRolesAsync()
+        private static async Task SeedRolesAsync(RoleManager<IdentityRole> roleManager)
         {
-            //Check for roles, if any, do nothing
-            if (_dbContext.Roles.Any())
-            {
-                return;
-            }
             //Create a few roles
             foreach (var role in Enum.GetNames(typeof(CBDRole)))
             {
-                await _roleManager.CreateAsync(new IdentityRole(role));
+                await roleManager.CreateAsync(new IdentityRole(role));
             }
         }
 
-        private async Task SeedUsersAsync()
+        private static async Task SeedUsersAsync(UserManager<CBDUser> userManager)
         {
-            //Check for users, if any, do nothing
-            if (_dbContext.Users.Any())
-            {
-                return;
-            }
+
 
 
             var adminUser = new CBDUser()
@@ -74,10 +63,10 @@ namespace CBD.Helpers
             };
 
             //Create new user
-            _userManager.CreateAsync(adminUser, "Abc&123!");
+            await userManager.CreateAsync(adminUser, "Abc&123!");
 
             //Add new user to admin role
-            _userManager.AddToRoleAsync(adminUser, CBDRole.Administrator.ToString());
+            await userManager.AddToRoleAsync(adminUser, CBDRole.Administrator.ToString());
 
             var modUser = new CBDUser()
             {
@@ -90,10 +79,10 @@ namespace CBD.Helpers
             };
 
             //Create new user
-            _userManager.CreateAsync(modUser, "Abc&123!");
+            await userManager.CreateAsync(modUser, "Abc&123!");
 
             //Add new user to admin role
-            _userManager.AddToRoleAsync(modUser, CBDRole.Moderator.ToString());
+            await userManager.AddToRoleAsync(modUser, CBDRole.Moderator.ToString());
 
         }
 
