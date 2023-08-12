@@ -2,6 +2,7 @@ using CBD.Data;
 using CBD.Helpers;
 using CBD.Models;
 using CBD.Services;
+using CBD.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
@@ -24,6 +25,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
 //custom services
+builder.Services.AddScoped<IImageService, ImageService>();
 builder.Services.AddScoped<IEmailSender, EmailService>();
 builder.Services.AddScoped<DataService>();
 //mail settings

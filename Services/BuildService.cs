@@ -1,40 +1,14 @@
 ﻿using CBD.Enums;
 using CBD.Models;
-using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
+using CBD.Services.Interfaces;
 using Newtonsoft.Json.Linq;
-using System.Diagnostics;
-using System.Text;
-using static CBD.Models.Build;
+using Newtonsoft.Json;
 
-namespace CBD.Controllers
+namespace CBD.Services
 {
-    public class HomeController : Controller
+    public class BuildService : IBuildService
     {
-        private readonly ILogger<HomeController> _logger;
-
-        public HomeController(ILogger<HomeController> logger)
-        {
-            _logger = logger;
-        }
-
-        public IActionResult Index()
-        {
-            return View();
-        }
-
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-
-        public IActionResult ImportJSON()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        public IActionResult BuildImport(IFormFile jsonFile, string jsonData)
+        public async Task ImportBuildFromJsonAsync(IFormFile jsonFile, string jsonData)
         {
             // Check if a file was uploaded and use its content
             if (jsonFile != null && jsonFile.Length > 0)
@@ -119,28 +93,11 @@ namespace CBD.Controllers
             }
 
             // Step 4: Pass the modified data and filename to the view
-            ViewBag.Filename = $"{charBuildData.Class}_{charBuildData.Name.Replace(" ", "_")}";
-            return View(charBuildData);
-        }
-
-        public IActionResult DownloadRawJson(string rawData, string filename)
-        {
-            // Set the content type and return the raw JSON data as a file
-            return File(Encoding.UTF8.GetBytes(rawData), "application/json", $"{filename}.json");
+            return charBuildData;
         }
 
 
-
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
-
-
-
-
+        //Custom json mapping
         public class PowerSetsConverter : Newtonsoft.Json.JsonConverter<PowerSets[]>
         {
             public override PowerSets[] ReadJson(JsonReader reader, Type objectType, PowerSets[] existingValue, bool hasExistingValue, JsonSerializer serializer)

@@ -76,9 +76,26 @@ namespace CBD.Areas.Identity.Pages.Account
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
             [Required]
+
+            [StringLength(50, ErrorMessage = "The {0} must be at least {2} and a max of {1} characters long", MinimumLength = 2)]
+            [Display(Name = "First Name")]
+            public string FirstName { get; set; }
+
+
+            [StringLength(50, ErrorMessage = "The {0} must be at least {2} and a max of {1} characters long", MinimumLength = 2)]
+            [Display(Name = "Last Name")]
+            public string LastName { get; set; }
+
+
+            [StringLength(50, ErrorMessage = "The {0} must be at least {2} and a max of {1} characters long", MinimumLength = 4)]
+            [Display(Name = "Global Name")]
+            public string GlobalName { get; set; }
+
+            [Required]
             [EmailAddress]
             [Display(Name = "Email")]
             public string Email { get; set; }
+
 
             /// <summary>
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
@@ -159,7 +176,13 @@ namespace CBD.Areas.Identity.Pages.Account
         {
             try
             {
-                return Activator.CreateInstance<CBDUser>();
+                CBDUser user = Activator.CreateInstance<CBDUser>();
+
+                user.FirstName = Input.FirstName;
+                user.LastName = Input.LastName;
+                user.GlobalName = Input.GlobalName;
+
+                return user;
             }
             catch
             {

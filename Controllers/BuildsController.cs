@@ -59,8 +59,9 @@ namespace CBD.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,ServerId,CBDUserId,Created,Updated,ReadyStatus,ImageData,ContentType,Class,ClassDisplay,Origin,Alignment,Name,Comment,LastPower,RawJson")] Build build)
+        public async Task<IActionResult> Create([Bind("Id,ServerId,CBDUserId")] IFormFile jsonFile, string jsonData, Build build)
         {
+
             if (ModelState.IsValid)
             {
                 _context.Add(build);
