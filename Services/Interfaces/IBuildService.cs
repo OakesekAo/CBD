@@ -1,8 +1,10 @@
-﻿namespace CBD.Services.Interfaces
+﻿using CBD.Models;
+
+namespace CBD.Services.Interfaces
 {
     public interface IBuildService
     {
-        public Task ImportBuildFromJsonAsync(IFormFile jsonFile, string jsonData);
+        public Task<Build> ImportBuildFromJsonAsync(IFormFile jsonFile, string jsonData);
 
     }
 }

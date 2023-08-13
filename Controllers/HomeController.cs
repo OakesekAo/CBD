@@ -107,9 +107,25 @@ namespace CBD.Controllers
                     {
                         powerSetType = PowerSetType.Pool;
                     }
-                    else
+                    else if (charBuildData.PowerSets[4].Name == rawPowerNamePrefix)
+                    {
+                        powerSetType = PowerSetType.Pool;
+                    }
+                    else if (charBuildData.PowerSets[5].Name == rawPowerNamePrefix)
+                    {
+                        powerSetType = PowerSetType.Pool;
+                    }
+                    else if (charBuildData.PowerSets[6].Name == rawPowerNamePrefix)
+                    {
+                        powerSetType = PowerSetType.Pool;
+                    }
+                    else if (charBuildData.PowerSets[7].Name == rawPowerNamePrefix)
                     {
                         powerSetType = PowerSetType.Epic;
+                    }
+                    else
+                    {
+                        powerSetType = PowerSetType.Inherent;
                     }
 
                     // Assign the values

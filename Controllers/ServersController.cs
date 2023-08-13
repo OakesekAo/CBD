@@ -7,19 +7,28 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using CBD.Data;
 using CBD.Models;
+using Microsoft.AspNetCore.Identity;
+using System.Reflection.Metadata;
+using CBD.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CBD.Controllers
 {
     public class ServersController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IImageService _imageService;
+        private readonly UserManager<CBDUser> _userManager;
 
-        public ServersController(ApplicationDbContext context)
+        public ServersController(ApplicationDbContext context, IImageService imageService, UserManager<CBDUser> userManager)
         {
             _context = context;
+            _imageService = imageService;
+            _userManager = userManager;
         }
 
         // GET: Servers
+        [Authorize]
         public async Task<IActionResult> Index()
         {
             var applicationDbContext = _context.Server.Include(s => s.CBDUser);
@@ -55,21 +64,44 @@ namespace CBD.Controllers
         // POST: Servers/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,CBDUserId,Name,Description,Created,Updated,ImageData,ContentType")] Server server)
+        public async Task<IActionResult> Create(Server server)
         {
-            if (ModelState.IsValid)
-            {
+
+            CBDUser cbdUser = await _userManager.GetUserAsync(User);
+            server.CBDUser = cbdUser;
+            server.CBDUserId = cbdUser.Id;
+
+
+           // if (ModelState.IsValid)
+           // {
+                server.Created = DateTime.UtcNow;
+                server.ImageData = await _imageService.ConvertFileToByteArrayAsync(server.Image);
+                //server.ContentType = _imageService.ConetentType(server.Image);
                 _context.Add(server);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
-            }
+           // }
+            /*if (!ModelState.IsValid)
+            {
+                foreach (var modelStateEntry in ModelState.Values)
+                {
+                    foreach (var error in modelStateEntry.Errors)
+                    {
+                        // Log or debug the error message
+                        var errorMessage = error.ErrorMessage;
+                    }
+                }
+            }*/
+
             ViewData["CBDUserId"] = new SelectList(_context.Users, "Id", "Id", server.CBDUserId);
             return View(server);
         }
 
         // GET: Servers/Edit/5
+        [Authorize]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Server == null)
@@ -89,21 +121,39 @@ namespace CBD.Controllers
         // POST: Servers/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,CBDUserId,Name,Description,Created,Updated,ImageData,ContentType")] Server server)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description")] Server server, IFormFile Image)
         {
             if (id != server.Id)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
-            {
+            //if (ModelState.IsValid)
+            //{
                 try
                 {
-                    _context.Update(server);
+                    var newServer = await _context.Server.FindAsync(server.Id);
+                    newServer.Updated = DateTime.UtcNow;
+                    if (newServer.Name != server.Name)
+                    {
+                        newServer.Name = server.Name;
+                    }
+
+                    if (newServer.Description != server.Description)
+                    {
+                        newServer.Description = server.Description;
+                    }
+
+                    if (Image is not null)
+                    {
+                        newServer.ImageData = await _imageService.ConvertFileToByteArrayAsync(Image);
+                    }
+
                     await _context.SaveChangesAsync();
+
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -117,7 +167,7 @@ namespace CBD.Controllers
                     }
                 }
                 return RedirectToAction(nameof(Index));
-            }
+            //}
             ViewData["CBDUserId"] = new SelectList(_context.Users, "Id", "Id", server.CBDUserId);
             return View(server);
         }

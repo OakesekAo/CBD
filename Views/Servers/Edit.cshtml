@@ -1,4 +1,7 @@
 ﻿@model CBD.Models.Server
+@using CBD.Services.Interfaces
+
+@inject IImageService ImageService
 
 @{
     ViewData["Title"] = "Edit";
@@ -10,14 +13,13 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <form asp-action="Edit" enctype="multipart/form-data">
+            @*<div asp-validation-summary="ModelOnly" class="text-danger"></div>*@
             <input type="hidden" asp-for="Id" />
-            <div class="form-group">
-                <label asp-for="CBDUserId" class="control-label"></label>
-                <select asp-for="CBDUserId" class="form-control" asp-items="ViewBag.CBDUserId"></select>
-                <span asp-validation-for="CBDUserId" class="text-danger"></span>
-            </div>
+            <input type="hidden" asp-for="CBDUserId" />
+            <input type="hidden" asp-for="Created" >
+            <input type="hidden" asp-for="ImageData" />
+            <input type="hidden" asp-for="ContentType" />
             <div class="form-group">
                 <label asp-for="Name" class="control-label"></label>
                 <input asp-for="Name" class="form-control" />
@@ -28,25 +30,20 @@
                 <input asp-for="Description" class="form-control" />
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Created" class="control-label"></label>
-                <input asp-for="Created" class="form-control" />
-                <span asp-validation-for="Created" class="text-danger"></span>
+
+            <div class="square-img-container">
+                @if (Model.ImageData != null)
+                {
+                    <img id="oldImage" class="square-img" width="200px;" src="@ImageService.ConveryByteArrayToFile(Model.ImageData,Model.ContentType!)">
+                }
+                else
+                {
+                    <img id="oldImage" class="square-img" src="~/img/DefaultContactImage.png">
+                }
             </div>
-            <div class="form-group">
-                <label asp-for="Updated" class="control-label"></label>
-                <input asp-for="Updated" class="form-control" />
-                <span asp-validation-for="Updated" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ImageData" class="control-label"></label>
-                <input asp-for="ImageData" class="form-control" />
-                <span asp-validation-for="ImageData" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ContentType" class="control-label"></label>
-                <input asp-for="ContentType" class="form-control" />
-                <span asp-validation-for="ContentType" class="text-danger"></span>
+            <div>
+                <input type="file" asp-for="Image" class="form-control" accept=".png,.jpg,.jpeg,.gif" onchange="document.getElementById('oldImage').src= window.URL.createObjectURL(this.files[0])" />
+                <span asp-validation-for="Image" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />

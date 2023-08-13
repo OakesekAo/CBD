@@ -1,4 +1,8 @@
-﻿@model IEnumerable<CBD.Models.Server>
+﻿@using CBD.Services.Interfaces;
+
+@inject IImageService imageService
+@model IEnumerable<CBD.Models.Server>
+
 
 @{
     ViewData["Title"] = "Index";
@@ -28,9 +32,6 @@
                 @Html.DisplayNameFor(model => model.ImageData)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ContentType)
-            </th>
-            <th>
                 @Html.DisplayNameFor(model => model.CBDUser)
             </th>
             <th></th>
@@ -51,14 +52,12 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Updated)
             </td>
+                <td>
+                    <img class="img-fluid" width="200px;" src="@imageService.ConveryByteArrayToFile(item.ImageData, item.ContentType)" />
+
+                </td>
             <td>
-                @Html.DisplayFor(modelItem => item.ImageData)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ContentType)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CBDUser.Id)
+                @Html.DisplayFor(modelItem => item.CBDUser.FullName)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |

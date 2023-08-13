@@ -8,7 +8,7 @@ namespace CBD.Services
 {
     public class BuildService : IBuildService
     {
-        public async Task ImportBuildFromJsonAsync(IFormFile jsonFile, string jsonData)
+        public async Task<Build> ImportBuildFromJsonAsync(IFormFile jsonFile, string jsonData)
         {
             // Check if a file was uploaded and use its content
             if (jsonFile != null && jsonFile.Length > 0)
