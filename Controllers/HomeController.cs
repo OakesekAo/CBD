@@ -81,7 +81,21 @@ namespace CBD.Controllers
             }
 
             charBuildData.PowerSets = powerSetsList.ToArray();
-
+            // List of prefixes corresponding to Inherent power set type
+            List<string> inherentPrefixes = new List<string>
+                    {
+                        "Inherent.Inherent",
+                        "Inherent.Fitness"
+                        // Add other possible prefixes here
+                    }; 
+            List<string> incarnatetPrefixes = new List<string>
+                    {
+                        "Incarnate.Alpha",
+                        "Incarnate.Interface",
+                        "Incarnate.Destiny",
+                        "Incarnate.Hybrid"
+                        // Add other possible prefixes here
+                    };
             //Power names adjusted and assigned
             foreach (var powerEntry in charBuildData.PowerEntries)
             {
@@ -95,7 +109,15 @@ namespace CBD.Controllers
                     string rawPowerNameDisplay = parts.Length > 2 ? parts[2].Replace("_", " ") : parts[1];
                     // Determine the PowerSetType based on the raw power name
                     PowerSetType powerSetType;
-                    if (charBuildData.PowerSets[0].Name == rawPowerNamePrefix)
+                    if (inherentPrefixes.Contains(rawPowerNamePrefix))
+                    {
+                        powerSetType = PowerSetType.Inherent;
+                    }
+                    else if (incarnatetPrefixes.Contains(rawPowerNamePrefix))
+                    {
+                        powerSetType = PowerSetType.Incarnate;
+                    }
+                    else if(charBuildData.PowerSets[0].Name == rawPowerNamePrefix)
                     {
                         powerSetType = PowerSetType.Primary;
                     }
@@ -125,7 +147,7 @@ namespace CBD.Controllers
                     }
                     else
                     {
-                        powerSetType = PowerSetType.Inherent;
+                        powerSetType = PowerSetType.Temporary;
                     }
 
                     // Assign the values
@@ -133,8 +155,18 @@ namespace CBD.Controllers
                     powerEntry.PowerSetType = powerSetType;
                 }
             }
+            var inherentPowerSetGroups = charBuildData.PowerSets
+    .Where(ps => ps.Type == CBD.Enums.PowerSetType.Inherent)
+    .GroupBy(ps => ps.Name.Split('.')[1])
+    .Select(group => new
+    {
+        Name = group.Key,
+        PowerEntries = charBuildData.PowerEntries
+            .Where(pe => pe.PowerSetType == CBD.Enums.PowerSetType.Inherent && pe.PowerName.StartsWith(group.Key))
+    });
 
             // Step 4: Pass the modified data and filename to the view
+            ViewBag.InherentPowerSetGroups = inherentPowerSetGroups;
             ViewBag.Filename = $"{charBuildData.Class}_{charBuildData.Name.Replace(" ", "_")}";
             return View(charBuildData);
         }

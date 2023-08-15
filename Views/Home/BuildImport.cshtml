@@ -1,4 +1,6 @@
 ﻿@using System.Text;
+@using CBD.Enums
+@using CBD.Models
 @model Build
 
 <div class="container mt-4">
@@ -10,10 +12,9 @@
     <p>Comment: @Model.Comment</p>
 
 
-<!-- ... (other HTML content) ... -->
+    <!-- ... (other HTML content) ... -->
 
-<a href="data:application/json;base64,@Convert.ToBase64String(Encoding.UTF8.GetBytes(Model.RawJson))" download="@($"{Model.Class}_{Model.Name.Replace(" ", "_")}.mbd")">Download Build</a>
-
+    <a href="data:application/json;base64,@Convert.ToBase64String(Encoding.UTF8.GetBytes(Model.RawJson))" download="@($"{Model.Class}_{Model.Name.Replace(" ", "_")}.mbd")">Download Build</a>
 
     <div class="row mt-4">
         <div class="col-4">
@@ -37,7 +38,7 @@
                                     <div class="card-header">
                                         <h5 class="mb-0">
                                             <button class="btn btn-link" data-bs-toggle="collapse" data-bs-target="#powerEntry@powerEntry.PowerName">
-                                                 @powerEntry.PowerNameDisplay
+                                                @powerEntry.PowerNameDisplay
                                             </button>
                                         </h5>
                                     </div>
@@ -137,7 +138,7 @@
                                             <div class="card-header">
                                                 <h5 class="mb-0">
                                                     <button class="btn btn-link" data-bs-toggle="collapse" data-bs-target="#powerEntry@powerEntry.PowerName">
-                                                         @powerEntry.PowerNameDisplay
+                                                        @powerEntry.PowerNameDisplay
                                                     </button>
                                                 </h5>
                                             </div>
@@ -170,97 +171,104 @@
             <h2>Pool Powers</h2>
             <div class="row mt-4">
                 <div class="col">
-                    @foreach (var powerSet in Model.PowerSets.Where(ps => ps.Type == CBD.Enums.PowerSetType.Pool))
+                    @foreach (var powerSetGroup in Model.PowerSets.Where(ps => ps.Type == CBD.Enums.PowerSetType.Pool)
+                    .GroupBy(ps => ps.Name.Split('.')[1]))
                     {
                         <div class="card my-2">
                             <div class="card-header">
                                 <h5 class="mb-0">
-                                    <button class="btn btn-link" data-bs-toggle="collapse" data-bs-target="#powerSet@powerSet">
-                                        @powerSet.NameDisplay
+                                    <button class="btn btn-link" data-bs-toggle="collapse" data-bs-target="#powerSetGroup@powerSetGroup.Key">
+                                        @powerSetGroup.Key
                                     </button>
                                 </h5>
                             </div>
 
-                            <div id="powerSet@powerSet" class="collapse">
+                            <div id="powerSetGroup@powerSetGroup.Key" class="collapse">
                                 <div class="card-body">
-                                    @foreach (var powerEntry in Model.PowerEntries.Where(pe => pe.PowerSetType == CBD.Enums.PowerSetType.Pool))
+                                    @foreach (var powerSet in powerSetGroup)
                                     {
-                                        <div class="card my-2">
-                                            <div class="card-header">
-                                                <h5 class="mb-0">
-                                                    <button class="btn btn-link" data-bs-toggle="collapse" data-bs-target="#powerEntry@powerEntry.PowerName">
-                                                         @powerEntry.PowerNameDisplay
-                                                    </button>
-                                                </h5>
-                                            </div>
+                                        foreach (var powerEntry in Model.PowerEntries.Where(pe => pe.PowerSetType == CBD.Enums.PowerSetType.Pool))
+                                        {
+                                            if (powerEntry.PowerName.StartsWith(powerSet.Name))
+                                            {
+                                                <div class="card my-2">
+                                                    <div class="card-header">
+                                                        <h5 class="mb-0">
+                                                            <button class="btn btn-link" data-bs-toggle="collapse" data-bs-target="#powerEntry@powerEntry.PowerName">
+                                                                @powerEntry.PowerNameDisplay
+                                                            </button>
+                                                        </h5>
+                                                    </div>
 
-                                            <div id="powerEntry@powerEntry.PowerName" class="collapse">
-                                                <div class="card-body">
-                                                    <p class="level">Power Placed at Level: @powerEntry.Level</p>
-                                                    <p class="stat-include">Stat Include: @powerEntry.StatInclude</p>
-                                                    <!-- Add other properties as needed -->
-                                                    <button class="btn btn-secondary show-slots-btn" data-bs-toggle="collapse" data-bs-target="#slots@powerEntry.PowerName">Show Slots</button>
-                                                    <div id="slots@powerEntry.PowerName" class="collapse">
-                                                        <ul class="list-group">
-                                                            @foreach (var slotEntry in powerEntry.SlotEntries)
-                                                            {
-                                                                <li class="list-group-item text-sm-center"> @slotEntry.Enhancement?.EnhancementName
-                                                    </li>
-                                                            }
-                                                        </ul>
+                                                    <div id="powerEntry@powerEntry.PowerName" class="collapse">
+                                                        <div class="card-body">
+                                                            <p class="level">Power Placed at Level: @powerEntry.Level</p>
+                                                            <p class="stat-include">Stat Include: @powerEntry.StatInclude</p>
+                                                            <!-- Add other properties as needed -->
+                                                            <button class="btn btn-secondary show-slots-btn" data-bs-toggle="collapse" data-bs-target="#slots@powerEntry.PowerName">Show Slots</button>
+                                                            <div id="slots@powerEntry.PowerName" class="collapse">
+                                                                <ul class="list-group">
+                                                                    @foreach (var slotEntry in powerEntry.SlotEntries)
+                                                                    {
+                                                                        <li class="list-group-item text-sm-center">
+                                                                            @slotEntry.Enhancement?.EnhancementName
+                                                                        </li>
+                                                                    }
+                                                                </ul>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        </div>
+                                            }
+                                        }
                                     }
                                 </div>
                             </div>
                         </div>
                     }
+
                 </div>
             </div>
 
             <h2>Inherent Powers</h2>
             <div class="row mt-4">
                 <div class="col">
-                    @foreach (var powerSet in Model.PowerSets.Where(ps => ps.Type == CBD.Enums.PowerSetType.Inherent))
+                    @foreach (var powerGroup in Model.PowerEntries.Where(pe => pe.PowerSetType == CBD.Enums.PowerSetType.Inherent)
+                    .GroupBy(pe => pe.PowerName.Split('.')[1]))
                     {
                         <div class="card my-2">
                             <div class="card-header">
                                 <h5 class="mb-0">
-                                    <button class="btn btn-link" data-bs-toggle="collapse" data-bs-target="#powerSet@powerSet">
-                                        @powerSet.NameDisplay
+                                    <button class="btn btn-link" data-bs-toggle="collapse" data-bs-target="#powerGroup@powerGroup.Key">
+                                        @powerGroup.Key
                                     </button>
                                 </h5>
                             </div>
 
-                            <div id="powerSet@powerSet" class="collapse">
+                            <div id="powerGroup@powerGroup.Key" class="collapse">
                                 <div class="card-body">
-                                    @foreach (var powerEntry in Model.PowerEntries.Where(pe => pe.PowerSetType == CBD.Enums.PowerSetType.Inherent))
+                                    @foreach (var power in powerGroup)
                                     {
                                         <div class="card my-2">
                                             <div class="card-header">
                                                 <h5 class="mb-0">
-                                                    <button class="btn btn-link" data-bs-toggle="collapse" data-bs-target="#powerEntry@powerEntry.PowerName">
-                                                         @powerEntry.PowerNameDisplay
-                                                    </button>
+                                                    @power.PowerNameDisplay
                                                 </h5>
                                             </div>
 
-                                            <div id="powerEntry@powerEntry.PowerName" class="collapse">
-                                                <div class="card-body">
-                                                    <p class="level">Power Placed at Level: @powerEntry.Level</p>
-                                                    <p class="stat-include">Stat Include: @powerEntry.StatInclude</p>
-                                                    <!-- Add other properties as needed -->
-                                                    <button class="btn btn-secondary show-slots-btn" data-bs-toggle="collapse" data-bs-target="#slots@powerEntry.PowerName">Show Slots</button>
-                                                    <div id="slots@powerEntry.PowerName" class="collapse">
-                                                        <ul class="list-group">
-                                                            @foreach (var slotEntry in powerEntry.SlotEntries)
-                                                            {
-                                                                <li class="list-group-item">Enhancement: @slotEntry.Enhancement?.EnhancementName</li>
-                                                            }
-                                                        </ul>
-                                                    </div>
+                                            <div class="card-body">
+                                                <p>Power Name: @power.PowerName</p>
+                                                <p>Power Set Type: @power.PowerSetType</p>
+                                                <button class="btn btn-secondary show-slots-btn" data-bs-toggle="collapse" data-bs-target="#slots@powerEntry.PowerName">Show Slots</button>
+                                                <div id="slots@powerEntry.PowerName" class="collapse">
+                                                    <ul class="list-group">
+                                                        @foreach (var slotEntry in power.SlotEntries)
+                                                        {
+                                                            <li class="list-group-item text-sm-center">
+                                                                @slotEntry.Enhancement?.EnhancementName
+                                                            </li>
+                                                        }
+                                                    </ul>
                                                 </div>
                                             </div>
                                         </div>
@@ -271,11 +279,14 @@
                     }
                 </div>
             </div>
+
         </div>
     </div>
 
 
 </div>
+
+
 
 @section Scripts {
 

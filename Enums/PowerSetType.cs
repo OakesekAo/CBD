@@ -15,6 +15,10 @@ namespace CBD.Enums
         [Description("Epic Powerset")]
         Epic,
         [Description("Inherent Powers")]
-        Inherent
+        Inherent,
+        [Description("Temporary Powers")]
+        Temporary,
+        [Description("Incarnate Powers")]
+        Incarnate,
     }
 }
