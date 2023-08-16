@@ -1,6 +1,11 @@
-﻿using CBD.Enums;
+﻿using CBD.Data;
+using CBD.Enums;
 using CBD.Models;
+using CBD.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Diagnostics;
@@ -12,10 +17,16 @@ namespace CBD.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly ApplicationDbContext _context;
+        private readonly IImageService _imageService;
+        private readonly UserManager<CBDUser> _userManager;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, ApplicationDbContext context, IImageService imageService, UserManager<CBDUser> userManager)
         {
             _logger = logger;
+            _context = context;
+            _imageService = imageService;
+            _userManager = userManager;
         }
 
         public IActionResult Index()
@@ -28,14 +39,19 @@ namespace CBD.Controllers
             return View();
         }
 
+        [Authorize]
         public IActionResult ImportJSON()
         {
             return View();
         }
 
+
+        [Authorize]
         [HttpPost]
-        public IActionResult BuildImport(IFormFile jsonFile, string jsonData)
+        public async Task<IActionResult> BuildImport(IFormFile jsonFile, string jsonData)
         {
+
+
             // Check if a file was uploaded and use its content
             if (jsonFile != null && jsonFile.Length > 0)
             {
@@ -51,6 +67,10 @@ namespace CBD.Controllers
                 Converters = { new PowerSetsConverter() } // Register a custom converter for PowerSets
             };
             Build charBuildData = JsonConvert.DeserializeObject<Build>(jsonData, settings);
+
+            CBDUser cbdUser = await _userManager.GetUserAsync(User);
+            charBuildData.CBDUser = cbdUser;
+            charBuildData.CBDUserId = cbdUser.Id;
 
             // Assign the raw JSON to the property
             charBuildData.RawJson = jsonData;
@@ -70,17 +90,34 @@ namespace CBD.Controllers
                     PowerSetType.Epic
             };
 
-            //PowerSets naming assigned
-            var powerSetsList = new List<PowerSets>();
-            for (int i = 0; i < charBuildData.PowerSets.Length; i++)
+
+            // Convert PowerSets to a list
+            List<PowerSets> powerSetsList = charBuildData.PowerSets.ToList();
+
+            for (int i = 0; i < powerSetsList.Count; i++)
             {
-                string rawName = charBuildData.PowerSets[i].Name; // Access the array element using [i]
+                string rawName = powerSetsList[i].Name; // Access the list element using [i]
                 string strippedName = rawName.Substring(rawName.IndexOf('.') + 1).Replace('_', ' ');
 
-                powerSetsList.Add(new PowerSets { Name = rawName, NameDisplay = strippedName, Type = powerSetTypes[i] });
+                powerSetsList[i] = new PowerSets { Name = rawName, NameDisplay = strippedName, Type = powerSetTypes[i] };
             }
 
-            charBuildData.PowerSets = powerSetsList.ToArray();
+            // Convert the List<PowerSets> back to an array
+            //charBuildData.PowerSets = powerSetsList.ToArray();
+
+
+
+
+            //PowerSets naming assigned
+            //var powerSetsList = new List<PowerSets>();
+            // for (int i = 0; i < charBuildData.PowerSets.Length; i++)
+            //{
+            //     string rawName = charBuildData.PowerSets[i].Name; // Access the array element using [i]
+            //     string strippedName = rawName.Substring(rawName.IndexOf('.') + 1).Replace('_', ' ');
+
+            //     powerSetsList.Add(new PowerSets { Name = rawName, NameDisplay = strippedName, Type = powerSetTypes[i] });
+            // }
+
             // List of prefixes corresponding to Inherent power set type
             List<string> inherentPrefixes = new List<string>
                     {
@@ -96,6 +133,9 @@ namespace CBD.Controllers
                         "Incarnate.Hybrid"
                         // Add other possible prefixes here
                     };
+
+            // Convert PowerEntries to a list
+            List<Powerentry> powerEntriesList = charBuildData.PowerEntries.ToList();
             //Power names adjusted and assigned
             foreach (var powerEntry in charBuildData.PowerEntries)
             {
@@ -117,31 +157,31 @@ namespace CBD.Controllers
                     {
                         powerSetType = PowerSetType.Incarnate;
                     }
-                    else if(charBuildData.PowerSets[0].Name == rawPowerNamePrefix)
+                    else if (powerSetsList[0].Name == rawPowerNamePrefix)
                     {
                         powerSetType = PowerSetType.Primary;
                     }
-                    else if (charBuildData.PowerSets[1].Name == rawPowerNamePrefix)
+                    else if (powerSetsList[1].Name == rawPowerNamePrefix)
                     {
                         powerSetType = PowerSetType.Secondary;
                     }
-                    else if (charBuildData.PowerSets[3].Name == rawPowerNamePrefix)
+                    else if (powerSetsList[3].Name == rawPowerNamePrefix)
                     {
                         powerSetType = PowerSetType.Pool;
                     }
-                    else if (charBuildData.PowerSets[4].Name == rawPowerNamePrefix)
+                    else if (powerSetsList[4].Name == rawPowerNamePrefix)
                     {
                         powerSetType = PowerSetType.Pool;
                     }
-                    else if (charBuildData.PowerSets[5].Name == rawPowerNamePrefix)
+                    else if (powerSetsList[5].Name == rawPowerNamePrefix)
                     {
                         powerSetType = PowerSetType.Pool;
                     }
-                    else if (charBuildData.PowerSets[6].Name == rawPowerNamePrefix)
+                    else if (powerSetsList[6].Name == rawPowerNamePrefix)
                     {
                         powerSetType = PowerSetType.Pool;
                     }
-                    else if (charBuildData.PowerSets[7].Name == rawPowerNamePrefix)
+                    else if (powerSetsList[7].Name == rawPowerNamePrefix)
                     {
                         powerSetType = PowerSetType.Epic;
                     }
@@ -154,27 +194,72 @@ namespace CBD.Controllers
                     powerEntry.PowerNameDisplay = rawPowerNameDisplay;
                     powerEntry.PowerSetType = powerSetType;
                 }
+
+
+                // Iterate through SlotEntries
+                foreach (var slotEntry in powerEntry.SlotEntries)
+                {
+                    if (slotEntry.Enhancement != null && slotEntry.Enhancement is Enhancement enhancementData)
+                    {
+                        // Create or retrieve Enhancement entity
+                        Enhancement enhancement = await _context.Enhancement.FirstOrDefaultAsync(e => e.EnhancementName == enhancementData.EnhancementName);
+                        if (enhancement == null)
+                        {
+                            // Create a new Enhancement if not found
+                            enhancement = new Enhancement
+                            {
+                                EnhancementName = enhancementData.EnhancementName,
+                                // Set other properties as needed
+                            };
+                            _context.Enhancement.Add(enhancement);
+                            await _context.SaveChangesAsync();
+                        }
+
+                        // Create Slotentry and associate it with Enhancement
+                        Slotentry newSlotEntry = new Slotentry
+                        {
+                            // Set Slotentry properties
+                            // ...
+                            Enhancement = enhancement,
+                            EnhancementId = enhancement.Id // Set the foreign key to the Enhancement
+                        };
+
+                        // Add the new Slotentry to the context
+                        _context.Slotentry.Add(newSlotEntry);
+                    }
+                }
             }
-            var inherentPowerSetGroups = charBuildData.PowerSets
-    .Where(ps => ps.Type == CBD.Enums.PowerSetType.Inherent)
-    .GroupBy(ps => ps.Name.Split('.')[1])
-    .Select(group => new
-    {
-        Name = group.Key,
-        PowerEntries = charBuildData.PowerEntries
-            .Where(pe => pe.PowerSetType == CBD.Enums.PowerSetType.Inherent && pe.PowerName.StartsWith(group.Key))
-    });
+            // Save changes to the context
+            await _context.SaveChangesAsync();
+            //save to db
+
+            charBuildData.Created = DateTime.UtcNow;
+
+            // Retrieve or create the Server entity
+            Server server = await _context.Server.FirstOrDefaultAsync(s => s.Name == charBuildData.BuiltWith.Database);
+            if (server == null)
+            {
+                // Create a new Server entity if not found
+                server = new Server { Name = charBuildData.BuiltWith.Database };
+                server.CBDUser = cbdUser;
+                server.CBDUserId = cbdUser.Id;
+                _context.Server.Add(server);
+                await _context.SaveChangesAsync();
+            }
+
+            // Set the Server and ServerId properties
+            charBuildData.Server = server;
+            charBuildData.ServerId = server.Id;
+
+            //charBuildData.ImageData = await _imageService.ConvertFileToByteArrayAsync(charBuildData.Image);
+            //server.ContentType = _imageService.ConetentType(server.Image);
+            _context.Add(charBuildData);
+            await _context.SaveChangesAsync();
+
 
             // Step 4: Pass the modified data and filename to the view
-            ViewBag.InherentPowerSetGroups = inherentPowerSetGroups;
             ViewBag.Filename = $"{charBuildData.Class}_{charBuildData.Name.Replace(" ", "_")}";
             return View(charBuildData);
-        }
-
-        public IActionResult DownloadRawJson(string rawData, string filename)
-        {
-            // Set the content type and return the raw JSON data as a file
-            return File(Encoding.UTF8.GetBytes(rawData), "application/json", $"{filename}.json");
         }
 
 
@@ -189,9 +274,9 @@ namespace CBD.Controllers
 
 
 
-        public class PowerSetsConverter : Newtonsoft.Json.JsonConverter<PowerSets[]>
+        public class PowerSetsConverter : JsonConverter<List<PowerSets>>
         {
-            public override PowerSets[] ReadJson(JsonReader reader, Type objectType, PowerSets[] existingValue, bool hasExistingValue, JsonSerializer serializer)
+            public override List<PowerSets> ReadJson(JsonReader reader, Type objectType, List<PowerSets> existingValue, bool hasExistingValue, JsonSerializer serializer)
             {
                 var token = JToken.Load(reader);
                 var powerSets = token.Select(t => new PowerSets
@@ -199,15 +284,18 @@ namespace CBD.Controllers
                     Name = t.Value<string>(),
                     NameDisplay = StripAndFormatName(t.Value<string>()),
                     Type = DeterminePowerSetType(t.Path)
-                }).ToArray();
+                }).ToList();
 
                 return powerSets;
             }
 
-            public override void WriteJson(JsonWriter writer, PowerSets[] value, JsonSerializer serializer)
+            public override void WriteJson(JsonWriter writer, List<PowerSets>? value, JsonSerializer serializer)
             {
                 throw new NotImplementedException();
             }
+
+
+
 
             private string StripAndFormatName(string rawName)
             {

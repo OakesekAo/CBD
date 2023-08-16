@@ -1,4 +1,5 @@
-﻿@model CBD.Models.Build
+﻿@using CBD.Enums;
+@model CBD.Models.Build
 
 @{
     ViewData["Title"] = "Edit";
@@ -10,63 +11,13 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Edit">
+        <form asp-action="Edit" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
             <div class="form-group">
-                <label asp-for="ServerId" class="control-label"></label>
-                <select asp-for="ServerId" class="form-control" asp-items="ViewBag.ServerId"></select>
-                <span asp-validation-for="ServerId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="CBDUserId" class="control-label"></label>
-                <select asp-for="CBDUserId" class="form-control" asp-items="ViewBag.CBDUserId"></select>
-                <span asp-validation-for="CBDUserId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Created" class="control-label"></label>
-                <input asp-for="Created" class="form-control" />
-                <span asp-validation-for="Created" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Updated" class="control-label"></label>
-                <input asp-for="Updated" class="form-control" />
-                <span asp-validation-for="Updated" class="text-danger"></span>
-            </div>
-            <div class="form-group">
                 <label asp-for="ReadyStatus" class="control-label"></label>
-                <select asp-for="ReadyStatus" class="form-control"></select>
+                <select asp-for="ReadyStatus" class="form-control" asp-items="Html.GetEnumSelectList<ReadyStatus>()"></select>
                 <span asp-validation-for="ReadyStatus" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ImageData" class="control-label"></label>
-                <input asp-for="ImageData" class="form-control" />
-                <span asp-validation-for="ImageData" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ContentType" class="control-label"></label>
-                <input asp-for="ContentType" class="form-control" />
-                <span asp-validation-for="ContentType" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Class" class="control-label"></label>
-                <input asp-for="Class" class="form-control" />
-                <span asp-validation-for="Class" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ClassDisplay" class="control-label"></label>
-                <input asp-for="ClassDisplay" class="form-control" />
-                <span asp-validation-for="ClassDisplay" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Origin" class="control-label"></label>
-                <input asp-for="Origin" class="form-control" />
-                <span asp-validation-for="Origin" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Alignment" class="control-label"></label>
-                <input asp-for="Alignment" class="form-control" />
-                <span asp-validation-for="Alignment" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Name" class="control-label"></label>
@@ -77,16 +28,6 @@
                 <label asp-for="Comment" class="control-label"></label>
                 <input asp-for="Comment" class="form-control" />
                 <span asp-validation-for="Comment" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="LastPower" class="control-label"></label>
-                <input asp-for="LastPower" class="form-control" />
-                <span asp-validation-for="LastPower" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="RawJson" class="control-label"></label>
-                <input asp-for="RawJson" class="form-control" />
-                <span asp-validation-for="RawJson" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />

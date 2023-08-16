@@ -46,50 +46,12 @@ namespace CBD.Services
 
             //PowerSets naming assigned
             var powerSetsList = new List<PowerSets>();
-            for (int i = 0; i < charBuildData.PowerSets.Length; i++)
-            {
-                string rawName = charBuildData.PowerSets[i].Name; // Access the array element using [i]
-                string strippedName = rawName.Substring(rawName.IndexOf('.') + 1).Replace('_', ' ');
 
-                powerSetsList.Add(new PowerSets { Name = rawName, NameDisplay = strippedName, Type = powerSetTypes[i] });
-            }
-
-            charBuildData.PowerSets = powerSetsList.ToArray();
+            //charBuildData.PowerSets = powerSetsList.ToArray();
 
             //Power names adjusted and assigned
             foreach (var powerEntry in charBuildData.PowerEntries)
             {
-                // Check if the PowerName is not empty or whitespace
-                if (!string.IsNullOrWhiteSpace(powerEntry.PowerName))
-                {
-                    // Get the prefix before the second "."
-                    string rawPowerNamePrefix = string.Join(".", powerEntry.PowerName.Split('.').Take(2));
-                    // Strip the prefix and replace '_' with ' ' to create PowerNameDisplay
-                    string[] parts = powerEntry.PowerName.Split('.');
-                    string rawPowerNameDisplay = parts.Length > 2 ? parts[2].Replace("_", " ") : parts[1];
-                    // Determine the PowerSetType based on the raw power name
-                    PowerSetType powerSetType;
-                    if (charBuildData.PowerSets[0].Name == rawPowerNamePrefix)
-                    {
-                        powerSetType = PowerSetType.Primary;
-                    }
-                    else if (charBuildData.PowerSets[1].Name == rawPowerNamePrefix)
-                    {
-                        powerSetType = PowerSetType.Secondary;
-                    }
-                    else if (charBuildData.PowerSets[3].Name == rawPowerNamePrefix)
-                    {
-                        powerSetType = PowerSetType.Pool;
-                    }
-                    else
-                    {
-                        powerSetType = PowerSetType.Epic;
-                    }
-
-                    // Assign the values
-                    powerEntry.PowerNameDisplay = rawPowerNameDisplay;
-                    powerEntry.PowerSetType = powerSetType;
-                }
             }
 
             // Step 4: Pass the modified data and filename to the view

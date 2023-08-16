@@ -10,6 +10,8 @@ using CBD.Models;
 using CBD.Enums;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.Reflection.Metadata;
+using System.Xml.Linq;
 
 namespace CBD.Controllers
 {
@@ -94,16 +96,30 @@ namespace CBD.Controllers
             };
 
             //PowerSets naming assigned
-            var powerSetsList = new List<PowerSets>();
-            for (int i = 0; i < charBuildData.PowerSets.Length; i++)
+
+
+            // Convert PowerSets to a list
+            List<PowerSets> powerSetsList = charBuildData.PowerSets.ToList();
+
+            for (int i = 0; i < powerSetsList.Count; i++)
             {
-                string rawName = charBuildData.PowerSets[i].Name; // Access the array element using [i]
+                string rawName = powerSetsList[i].Name; // Access the list element using [i]
                 string strippedName = rawName.Substring(rawName.IndexOf('.') + 1).Replace('_', ' ');
 
-                powerSetsList.Add(new PowerSets { Name = rawName, NameDisplay = strippedName, Type = powerSetTypes[i] });
+                powerSetsList[i] = new PowerSets { Name = rawName, NameDisplay = strippedName, Type = powerSetTypes[i] };
             }
 
-            charBuildData.PowerSets = powerSetsList.ToArray();
+
+
+            //for (int i = 0; i < charBuildData.PowerSets.Length; i++)
+            //{
+            //    string rawName = charBuildData.PowerSets[i].Name; // Access the array element using [i]
+            //    string strippedName = rawName.Substring(rawName.IndexOf('.') + 1).Replace('_', ' ');
+
+            //    powerSetsList.Add(new PowerSets { Name = rawName, NameDisplay = strippedName, Type = powerSetTypes[i] });
+            //}
+
+            //charBuildData.PowerSets = powerSetsList.ToArray();
 
             //Power names adjusted and assigned
             foreach (var powerEntry in charBuildData.PowerEntries)
@@ -118,15 +134,15 @@ namespace CBD.Controllers
                     string rawPowerNameDisplay = parts.Length > 2 ? parts[2].Replace("_", " ") : parts[1];
                     // Determine the PowerSetType based on the raw power name
                     PowerSetType powerSetType;
-                    if (charBuildData.PowerSets[0].Name == rawPowerNamePrefix)
+                    if (powerSetsList[0].Name == rawPowerNamePrefix)
                     {
                         powerSetType = PowerSetType.Primary;
                     }
-                    else if (charBuildData.PowerSets[1].Name == rawPowerNamePrefix)
+                    else if (powerSetsList[1].Name == rawPowerNamePrefix)
                     {
                         powerSetType = PowerSetType.Secondary;
                     }
-                    else if (charBuildData.PowerSets[3].Name == rawPowerNamePrefix)
+                    else if (powerSetsList[3].Name == rawPowerNamePrefix)
                     {
                         powerSetType = PowerSetType.Pool;
                     }
@@ -198,33 +214,42 @@ namespace CBD.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,ServerId,CBDUserId,Created,Updated,ReadyStatus,ImageData,ContentType,Class,ClassDisplay,Origin,Alignment,Name,Comment,LastPower,RawJson")] Build build)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,ReadyStatus,Name,Comment")] Build build)
         {
             if (id != build.Id)
             {
                 return NotFound();
             }
-
-            if (ModelState.IsValid)
+            try
             {
-                try
-                {
-                    _context.Update(build);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!BuildExists(build.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                var newBuild = await _context.Build
+    .Include(b => b.BuiltWith)         // Eager load BuiltWith
+    .Include(b => b.CBDUser)           // Eager load CBDUser
+    .Include(b => b.PowerEntries)      // Eager load PowerEntries
+        .ThenInclude(pe => pe.SlotEntries) // Eager load SlotEntries within PowerEntries
+    .Include(b => b.PowerSets)         // Eager load PowerSets
+    .FirstOrDefaultAsync(b => b.Id == build.Id);
+
+                newBuild.Updated = DateTime.UtcNow;
+                _context.Update(newBuild);
+                await _context.SaveChangesAsync();
             }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!BuildExists(build.Id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            return RedirectToAction(nameof(Index));
+
+
+
+
             ViewData["CBDUserId"] = new SelectList(_context.Users, "Id", "Id", build.CBDUserId);
             ViewData["ServerId"] = new SelectList(_context.Server, "Id", "Description", build.ServerId);
             return View(build);
@@ -264,14 +289,14 @@ namespace CBD.Controllers
             {
                 _context.Build.Remove(build);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool BuildExists(int id)
         {
-          return (_context.Build?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_context.Build?.Any(e => e.Id == id)).GetValueOrDefault();
         }
 
         public class PowerSetsConverter : Newtonsoft.Json.JsonConverter<PowerSets[]>

@@ -77,11 +77,11 @@ namespace CBD.Data.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    EnhancementName = table.Column<string>(type: "text", nullable: false),
+                    EnhancementName = table.Column<string>(type: "text", nullable: true),
                     Grade = table.Column<string>(type: "text", nullable: false),
-                    IoLevel = table.Column<int>(type: "integer", nullable: false),
-                    RelativeLevel = table.Column<string>(type: "text", nullable: false),
-                    Obtained = table.Column<bool>(type: "boolean", nullable: false)
+                    IoLevel = table.Column<int>(type: "integer", nullable: true),
+                    RelativeLevel = table.Column<string>(type: "text", nullable: true),
+                    Obtained = table.Column<bool>(type: "boolean", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -230,9 +230,9 @@ namespace CBD.Data.Migrations
                     Created = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     Updated = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     ReadyStatus = table.Column<int>(type: "integer", nullable: false),
-                    ImageData = table.Column<byte[]>(type: "bytea", nullable: false),
-                    ContentType = table.Column<string>(type: "text", nullable: false),
-                    BuiltWithId = table.Column<int>(type: "integer", nullable: false),
+                    ImageData = table.Column<byte[]>(type: "bytea", nullable: true),
+                    ContentType = table.Column<string>(type: "text", nullable: true),
+                    BuiltwithId = table.Column<int>(type: "integer", nullable: false),
                     Class = table.Column<string>(type: "text", nullable: false),
                     ClassDisplay = table.Column<string>(type: "text", nullable: false),
                     Origin = table.Column<string>(type: "text", nullable: false),
@@ -252,8 +252,8 @@ namespace CBD.Data.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Build_Builtwith_BuiltWithId",
-                        column: x => x.BuiltWithId,
+                        name: "FK_Build_Builtwith_BuiltwithId",
+                        column: x => x.BuiltwithId,
                         principalTable: "Builtwith",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -328,10 +328,10 @@ namespace CBD.Data.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    BuildId = table.Column<int>(type: "integer", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false),
                     NameDisplay = table.Column<string>(type: "text", nullable: false),
-                    Type = table.Column<int>(type: "integer", nullable: false),
-                    BuildId = table.Column<int>(type: "integer", nullable: true)
+                    Type = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -340,7 +340,8 @@ namespace CBD.Data.Migrations
                         name: "FK_PowerSets_Build_BuildId",
                         column: x => x.BuildId,
                         principalTable: "Build",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -428,9 +429,9 @@ namespace CBD.Data.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Level = table.Column<int>(type: "integer", nullable: false),
-                    IsInherent = table.Column<bool>(type: "boolean", nullable: false),
-                    EnhancementId = table.Column<int>(type: "integer", nullable: false),
+                    Level = table.Column<int>(type: "integer", nullable: true),
+                    IsInherent = table.Column<bool>(type: "boolean", nullable: true),
+                    EnhancementId = table.Column<int>(type: "integer", nullable: true),
                     PowerentryId = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
@@ -440,8 +441,7 @@ namespace CBD.Data.Migrations
                         name: "FK_Slotentry_Enhancement_EnhancementId",
                         column: x => x.EnhancementId,
                         principalTable: "Enhancement",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Slotentry_Powerentry_PowerentryId",
                         column: x => x.PowerentryId,
@@ -487,9 +487,9 @@ namespace CBD.Data.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Build_BuiltWithId",
+                name: "IX_Build_BuiltwithId",
                 table: "Build",
-                column: "BuiltWithId");
+                column: "BuiltwithId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Build_CBDUserId",

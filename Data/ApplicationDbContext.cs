@@ -15,5 +15,7 @@ namespace CBD.Data
         public DbSet<CBD.Models.Server>? Server { get; set; }
         public DbSet<CBD.Models.Tag>? Tag { get; set; }
         public DbSet<CBD.Models.Build>? Build { get; set; }
+        public DbSet<CBD.Models.Enhancement>? Enhancement { get; set; }
+        public DbSet<CBD.Models.Slotentry>? Slotentry { get; set; }
     }
 }

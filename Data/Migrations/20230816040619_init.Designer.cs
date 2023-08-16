@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CBD.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230813170428_init")]
+    [Migration("20230816040619_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -36,7 +36,7 @@ namespace CBD.Data.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("BuiltWithId")
+                    b.Property<int>("BuiltwithId")
                         .HasColumnType("integer");
 
                     b.Property<string>("CBDUserId")
@@ -56,14 +56,12 @@ namespace CBD.Data.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("ContentType")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<DateTime>("Created")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<byte[]>("ImageData")
-                        .IsRequired()
                         .HasColumnType("bytea");
 
                     b.Property<int>("LastPower")
@@ -92,7 +90,7 @@ namespace CBD.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BuiltWithId");
+                    b.HasIndex("BuiltwithId");
 
                     b.HasIndex("CBDUserId");
 
@@ -326,21 +324,19 @@ namespace CBD.Data.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("EnhancementName")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Grade")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("IoLevel")
+                    b.Property<int?>("IoLevel")
                         .HasColumnType("integer");
 
-                    b.Property<bool>("Obtained")
+                    b.Property<bool?>("Obtained")
                         .HasColumnType("boolean");
 
                     b.Property<string>("RelativeLevel")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
@@ -400,7 +396,7 @@ namespace CBD.Data.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("BuildId")
+                    b.Property<int>("BuildId")
                         .HasColumnType("integer");
 
                     b.Property<string>("Name")
@@ -469,13 +465,13 @@ namespace CBD.Data.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("EnhancementId")
+                    b.Property<int?>("EnhancementId")
                         .HasColumnType("integer");
 
-                    b.Property<bool>("IsInherent")
+                    b.Property<bool?>("IsInherent")
                         .HasColumnType("boolean");
 
-                    b.Property<int>("Level")
+                    b.Property<int?>("Level")
                         .HasColumnType("integer");
 
                     b.Property<int?>("PowerentryId")
@@ -659,8 +655,8 @@ namespace CBD.Data.Migrations
             modelBuilder.Entity("CBD.Models.Build", b =>
                 {
                     b.HasOne("CBD.Models.Builtwith", "BuiltWith")
-                        .WithMany()
-                        .HasForeignKey("BuiltWithId")
+                        .WithMany("Builds")
+                        .HasForeignKey("BuiltwithId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -742,9 +738,13 @@ namespace CBD.Data.Migrations
 
             modelBuilder.Entity("CBD.Models.PowerSets", b =>
                 {
-                    b.HasOne("CBD.Models.Build", null)
+                    b.HasOne("CBD.Models.Build", "Build")
                         .WithMany("PowerSets")
-                        .HasForeignKey("BuildId");
+                        .HasForeignKey("BuildId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Build");
                 });
 
             modelBuilder.Entity("CBD.Models.Server", b =>
@@ -761,10 +761,8 @@ namespace CBD.Data.Migrations
             modelBuilder.Entity("CBD.Models.Slotentry", b =>
                 {
                     b.HasOne("CBD.Models.Enhancement", "Enhancement")
-                        .WithMany()
-                        .HasForeignKey("EnhancementId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .WithMany("SlotEntries")
+                        .HasForeignKey("EnhancementId");
 
                     b.HasOne("CBD.Models.Powerentry", null)
                         .WithMany("SlotEntries")
@@ -865,11 +863,21 @@ namespace CBD.Data.Migrations
                     b.Navigation("Tags");
                 });
 
+            modelBuilder.Entity("CBD.Models.Builtwith", b =>
+                {
+                    b.Navigation("Builds");
+                });
+
             modelBuilder.Entity("CBD.Models.CBDUser", b =>
                 {
                     b.Navigation("Builds");
 
                     b.Navigation("Servers");
+                });
+
+            modelBuilder.Entity("CBD.Models.Enhancement", b =>
+                {
+                    b.Navigation("SlotEntries");
                 });
 
             modelBuilder.Entity("CBD.Models.Powerentry", b =>
