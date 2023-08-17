@@ -12,6 +12,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Reflection.Metadata;
 using System.Xml.Linq;
+using Microsoft.Extensions.Hosting;
 
 namespace CBD.Controllers
 {
@@ -27,7 +28,10 @@ namespace CBD.Controllers
         // GET: Builds
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Build.Include(b => b.CBDUser).Include(b => b.Server);
+            var applicationDbContext = _context.Build
+                .Include(b => b.CBDUser)
+                .Include(b => b.Server)
+                .Include(b => b.PowerSets);
             return View(await applicationDbContext.ToListAsync());
         }
 
@@ -40,8 +44,13 @@ namespace CBD.Controllers
             }
 
             var build = await _context.Build
-                .Include(b => b.CBDUser)
+                .Include(b => b.BuiltWith)         // Eager load BuiltWith
+                .Include(b => b.CBDUser)           // Eager load CBDUser
                 .Include(b => b.Server)
+                .Include(b => b.PowerEntries)      // Eager load PowerEntries
+                    .ThenInclude(b => b.SlotEntries) // Eager load SlotEntries within PowerEntries
+                        .ThenInclude(pe => pe.Enhancement) // Eager load SlotEntries within PowerEntries
+                .Include(b => b.PowerSets)         // Eager load PowerSets
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (build == null)
             {
@@ -223,14 +232,18 @@ namespace CBD.Controllers
             try
             {
                 var newBuild = await _context.Build
-    .Include(b => b.BuiltWith)         // Eager load BuiltWith
-    .Include(b => b.CBDUser)           // Eager load CBDUser
-    .Include(b => b.PowerEntries)      // Eager load PowerEntries
-        .ThenInclude(pe => pe.SlotEntries) // Eager load SlotEntries within PowerEntries
-    .Include(b => b.PowerSets)         // Eager load PowerSets
-    .FirstOrDefaultAsync(b => b.Id == build.Id);
+                                                .Include(b => b.BuiltWith)         // Eager load BuiltWith
+                                                .Include(b => b.CBDUser)           // Eager load CBDUser
+                                                .Include(b => b.PowerEntries)      // Eager load PowerEntries
+                                                    .ThenInclude(pe => pe.SlotEntries) // Eager load SlotEntries within PowerEntries
+                                                .Include(b => b.PowerSets)         // Eager load PowerSets
+                                                .FirstOrDefaultAsync(b => b.Id == build.Id);
 
                 newBuild.Updated = DateTime.UtcNow;
+                newBuild.Name = build.Name;
+                newBuild.Comment = build.Comment;
+                newBuild.ReadyStatus = build.ReadyStatus;
+
                 _context.Update(newBuild);
                 await _context.SaveChangesAsync();
             }
@@ -284,9 +297,18 @@ namespace CBD.Controllers
             {
                 return Problem("Entity set 'ApplicationDbContext.Build'  is null.");
             }
-            var build = await _context.Build.FindAsync(id);
+            var build = await _context.Build
+                                    .Include(b => b.PowerEntries)
+                                        .ThenInclude(s => s.SlotEntries)
+                                    // Include other related entities if needed
+                                    .FirstOrDefaultAsync(b => b.Id == id);
             if (build != null)
             {
+                // Remove related Slotentry records first
+                _context.Slotentry.RemoveRange(build.PowerEntries.SelectMany(pe => pe.SlotEntries));
+                // Remove related Powerentry records
+                _context.Powerentry.RemoveRange(build.PowerEntries);
+                // Remove the Build record
                 _context.Build.Remove(build);
             }
 

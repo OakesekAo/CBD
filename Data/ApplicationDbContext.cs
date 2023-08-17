@@ -17,5 +17,7 @@ namespace CBD.Data
         public DbSet<CBD.Models.Build>? Build { get; set; }
         public DbSet<CBD.Models.Enhancement>? Enhancement { get; set; }
         public DbSet<CBD.Models.Slotentry>? Slotentry { get; set; }
+        public DbSet<CBD.Models.Powerentry>? Powerentry { get; set; }
+        public DbSet<CBD.Models.PowerSets>? PowerSets { get; set; }
     }
 }
