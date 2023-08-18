@@ -1,7 +1,33 @@
 ﻿@using System.Text;
+@using Microsoft.AspNetCore.Hosting
 @using CBD.Enums
 @using CBD.Models
 @model Build
+
+@inject IWebHostEnvironment WebHostEnvironment
+
+
+@functions {
+    private string GetMatchingImage(string directory, string partialName)
+    {
+        var imageFiles = Directory.GetFiles(directory, "*.png");
+
+        foreach (var imagePath in imageFiles)
+        {
+            var imageName = imagePath.Substring(imagePath.LastIndexOf('\\') + 1);
+
+            if (imageName != null && imageName.Contains(partialName))
+            {
+                return imageName;
+            }
+        }
+
+        return null;
+    }
+
+
+}
+
 
 <div class="container mt-4">
     <div class="row">
@@ -9,7 +35,8 @@
             <h1>
                 Name: @Model.Name
             </h1>
-            <h3>Class: @Model.ClassDisplay</h3>
+            <h3>Class: <img src="~/images/archetypes/@($"{Model.Class}.png")" /> @Model.ClassDisplay</h3>
+
             <p>Comment: @Model.Comment</p>
         </div>
         <div class="col ">
@@ -21,11 +48,26 @@
         </div>
     </div>
 
+    <!-- Sticky Top Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top mt-2">
+        <div class="container-fluid d-flex justify-content-center">
+            <div class="d-flex flex-wrap justify-content-between">
+                <a class="nav-link" href="#primary-powers">Primary&nbsp;|&nbsp;</a>
+                <a class="nav-link" href="#secondary-powers">Secondary&nbsp;|&nbsp;</a>
+                <a class="nav-link" href="#epic-powers">Epic&nbsp;|&nbsp;</a>
+                <a class="nav-link" href="#pool-powers">Pool&nbsp;|&nbsp;</a>
+                <a class="nav-link" href="#inherent-powers">Inherent</a>
+            </div>
+        </div>
+    </nav>
+
+
+
 
 
     <div class="row mt-4">
-        <div class="col col-md-3">
-            <h2 class="card-title">Primary Powers</h2>
+        <div class="col col-md-4 border border-dark-subtle border-3">
+            <h2 class="card-title" id="primary-powers">Primary Powers</h2>
             @foreach (var powerSet in Model.PowerSets.Where(ps => ps.Type == CBD.Enums.PowerSetType.Primary && !string.IsNullOrEmpty(ps.Name)))
             {
                 <div class="card my-2">
@@ -40,14 +82,30 @@
                             @foreach (var powerEntry in Model.PowerEntries.Where(pe => pe.PowerSetType == CBD.Enums.PowerSetType.Primary && !string.IsNullOrEmpty(pe.PowerName)))
                             {
                                 <div class="col mt-2">
-                                    <div class="bg-primary p-1 rounded border border-dark-subtle border-3">
-                                        <div class="text-left mb-1">
+                                    <div class=" p-1 rounded border border-dark-subtle border-3" style="background-image: url('/images/pslot2.png'); background-size: 100% 90%; background-repeat: no-repeat;">
+                                        <div class="text-center mb-1">
                                             <h2 class="h5">@powerEntry.Level - @powerEntry.PowerNameDisplay</h2>
                                         </div>
                                         <div class="d-flex justify-content-left">
                                             @foreach (var slotEntry in powerEntry.SlotEntries)
                                             {
-                                                <div class="rounded-circle bg-dark border border-warning border-3" data-bs-toggle="popover" data-bs-placement="bottom" data-bs-content="@slotEntry.Enhancement?.EnhancementName" style="width: 40px; height: 40px;"></div>
+                                                <div class="rounded-circle bg-dark border border-warning border-3" data-bs-toggle="popover" data-bs-placement="bottom" data-bs-content="@slotEntry.Enhancement?.EnhancementName" style="width: 40px; height: 40px;">
+                                                    @{
+                                                        var enhancementName = slotEntry.Enhancement?.EnhancementName;
+                                                        var sanitizedEnhancementName = enhancementName?.Split(':')[0].Trim().Replace("'", "");
+                                                        if (!string.IsNullOrEmpty(sanitizedEnhancementName))
+                                                        {
+                                                            sanitizedEnhancementName = sanitizedEnhancementName.Replace(" ", "");
+                                                        }
+                                                        var webRootPath = WebHostEnvironment.WebRootPath;
+                                                        var enhancementsDirectory = webRootPath + "/images/enhancements";
+                                                        var matchingImage = GetMatchingImage(enhancementsDirectory, sanitizedEnhancementName);
+                                                    }
+                                                    @if (matchingImage != null)
+                                                    {
+                                                        <img src="~/images/enhancements/@(matchingImage)" alt="@slotEntry.Enhancement?.EnhancementName" style="width: 100%; height: 100%;" />
+                                                    }
+                                                </div>
 
                                             }
                                         </div>
@@ -59,8 +117,8 @@
                 </div>
             }
         </div>
-        <div class="col col-md-3">
-            <h2 class="card-title">Secondary Powers</h2>
+        <div class="col col-md-4 border border-dark-subtle border-3">
+            <h2 class="card-title" id="secondary-powers">Secondary Powers</h2>
             @foreach (var powerSet in Model.PowerSets.Where(ps => ps.Type == CBD.Enums.PowerSetType.Secondary && !string.IsNullOrEmpty(ps.Name)))
             {
                 <div class="card my-2">
@@ -75,15 +133,31 @@
                             @foreach (var powerEntry in Model.PowerEntries.Where(pe => pe.PowerSetType == CBD.Enums.PowerSetType.Secondary && !string.IsNullOrEmpty(pe.PowerName)))
                             {
                                 <div class="col mt-2">
-                                    <div class="bg-primary p-1 rounded border border-dark-subtle border-3">
+
+                                    <div class=" p-1 rounded border border-dark-subtle border-3" style="background-image: url('/images/pslot2.png'); background-size: 100% 90%; background-repeat: no-repeat;">
                                         <div class="text-left mb-1">
                                             <h2 class="h5">@powerEntry.Level - @powerEntry.PowerNameDisplay</h2>
                                         </div>
                                         <div class="d-flex justify-content-left">
                                             @foreach (var slotEntry in powerEntry.SlotEntries)
                                             {
-                                                <div class="rounded-circle bg-dark border border-warning border-3" data-bs-toggle="popover" data-bs-placement="bottom" data-bs-content="@slotEntry.Enhancement?.EnhancementName" style="width: 40px; height: 40px;"></div>
-
+                                                <div class="rounded-circle bg-dark border border-warning border-3" data-bs-toggle="popover" data-bs-placement="bottom" data-bs-content="@slotEntry.Enhancement?.EnhancementName" style="width: 40px; height: 40px;">
+                                                    @{
+                                                        var enhancementName = slotEntry.Enhancement?.EnhancementName;
+                                                        var sanitizedEnhancementName = enhancementName?.Split(':')[0].Trim().Replace("'", "");
+                                                        if (!string.IsNullOrEmpty(sanitizedEnhancementName))
+                                                        {
+                                                            sanitizedEnhancementName = sanitizedEnhancementName.Replace(" ", "");
+                                                        }
+                                                        var webRootPath = WebHostEnvironment.WebRootPath;
+                                                        var enhancementsDirectory = webRootPath + "/images/enhancements";
+                                                        var matchingImage = GetMatchingImage(enhancementsDirectory, sanitizedEnhancementName);
+                                                    }
+                                                    @if (matchingImage != null)
+                                                    {
+                                                        <img src="~/images/enhancements/@(matchingImage)" alt="@slotEntry.Enhancement?.EnhancementName" style="width: 100%; height: 100%;" />
+                                                    }
+                                                </div>
                                             }
                                         </div>
                                     </div>
@@ -94,8 +168,8 @@
                 </div>
             }
         </div>
-        <div class="col col-md-3">
-            <h2 class="card-title">Mastery/Epic Powers</h2>
+        <div class="col col-md-4 border border-dark-subtle border-3">
+            <h2 class="card-title" id="epic-powers">Epic Powers</h2>
             <div class="row mt-4">
                 <div class="col">
                     @foreach (var powerSet in Model.PowerSets.Where(ps => ps.Type == CBD.Enums.PowerSetType.Epic && !string.IsNullOrEmpty(ps.Name)))
@@ -112,15 +186,31 @@
                                     @foreach (var powerEntry in Model.PowerEntries.Where(pe => pe.PowerSetType == CBD.Enums.PowerSetType.Epic && !string.IsNullOrEmpty(pe.PowerName)))
                                     {
                                         <div class="col mt-2">
-                                            <div class="bg-primary p-1 rounded border border-dark-subtle border-3">
+
+                                            <div class=" p-1 rounded border border-dark-subtle border-3" style="background-image: url('/images/pslot2.png'); background-size: 100% 90%; background-repeat: no-repeat;">
                                                 <div class="text-left mb-1">
                                                     <h2 class="h5">@powerEntry.Level - @powerEntry.PowerNameDisplay</h2>
                                                 </div>
                                                 <div class="d-flex justify-content-left">
                                                     @foreach (var slotEntry in powerEntry.SlotEntries)
                                                     {
-                                                        <div class="rounded-circle bg-dark border border-warning border-3" data-bs-toggle="popover" data-bs-placement="bottom" data-bs-content="@slotEntry.Enhancement?.EnhancementName" style="width: 40px; height: 40px;"></div>
-
+                                                        <div class="rounded-circle bg-dark border border-warning border-3" data-bs-toggle="popover" data-bs-placement="bottom" data-bs-content="@slotEntry.Enhancement?.EnhancementName" style="width: 40px; height: 40px;">
+                                                            @{
+                                                                var enhancementName = slotEntry.Enhancement?.EnhancementName;
+                                                                var sanitizedEnhancementName = enhancementName?.Split(':')[0].Trim().Replace("'", "");
+                                                                if (!string.IsNullOrEmpty(sanitizedEnhancementName))
+                                                                {
+                                                                    sanitizedEnhancementName = sanitizedEnhancementName.Replace(" ", "");
+                                                                }
+                                                                var webRootPath = WebHostEnvironment.WebRootPath;
+                                                                var enhancementsDirectory = webRootPath + "/images/enhancements";
+                                                                var matchingImage = GetMatchingImage(enhancementsDirectory, sanitizedEnhancementName);
+                                                            }
+                                                            @if (matchingImage != null)
+                                                            {
+                                                                <img src="~/images/enhancements/@(matchingImage)" alt="@slotEntry.Enhancement?.EnhancementName" style="width: 100%; height: 100%;" />
+                                                            }
+                                                        </div>
                                                     }
                                                 </div>
                                             </div>
@@ -133,7 +223,7 @@
                 </div>
             </div>
 
-            <h2 class="card-title">Pool Powers</h2>
+            <h2 class="card-title" id="pool-powers">Pool Powers</h2>
             <div class="row mt-4">
                 <div class="col">
                     @foreach (var powerSetGroup in Model.PowerSets.Where(ps => ps.Type == CBD.Enums.PowerSetType.Pool && !string.IsNullOrEmpty(ps.Name))
@@ -155,15 +245,30 @@
                                             if (powerEntry.PowerName.StartsWith(powerSet.Name))
                                             {
                                                 <div class="col mt-2">
-                                                    <div class="bg-primary p-1 rounded border border-dark-subtle border-3">
+                                                    <div class=" p-1 rounded border border-dark-subtle border-3" style="background-image: url('/images/pslot2.png'); background-size: 100% 90%; background-repeat: no-repeat;">
                                                         <div class="text-left mb-1">
                                                             <h2 class="h5">@powerEntry.Level - @powerEntry.PowerNameDisplay</h2>
                                                         </div>
                                                         <div class="d-flex justify-content-left">
                                                             @foreach (var slotEntry in powerEntry.SlotEntries)
                                                             {
-                                                                <div class="rounded-circle bg-dark border border-warning border-3" data-bs-toggle="popover" data-bs-placement="bottom" data-bs-content="@slotEntry.Enhancement?.EnhancementName" style="width: 40px; height: 40px;"></div>
-
+                                                                <div class="rounded-circle bg-dark border border-warning border-3" data-bs-toggle="popover" data-bs-placement="bottom" data-bs-content="@slotEntry.Enhancement?.EnhancementName" style="width: 40px; height: 40px;">
+                                                                    @{
+                                                                        var enhancementName = slotEntry.Enhancement?.EnhancementName;
+                                                                        var sanitizedEnhancementName = enhancementName?.Split(':')[0].Trim().Replace("'", "");
+                                                                        if (!string.IsNullOrEmpty(sanitizedEnhancementName))
+                                                                        {
+                                                                            sanitizedEnhancementName = sanitizedEnhancementName.Replace(" ", "");
+                                                                        }
+                                                                        var webRootPath = WebHostEnvironment.WebRootPath;
+                                                                        var enhancementsDirectory = webRootPath + "/images/enhancements";
+                                                                        var matchingImage = GetMatchingImage(enhancementsDirectory, sanitizedEnhancementName);
+                                                                    }
+                                                                    @if (matchingImage != null)
+                                                                    {
+                                                                        <img src="~/images/enhancements/@(matchingImage)" alt="@slotEntry.Enhancement?.EnhancementName" style="width: 100%; height: 100%;" />
+                                                                    }
+                                                                </div>
                                                             }
                                                         </div>
                                                     </div>
@@ -179,7 +284,7 @@
                 </div>
             </div>
 
-            <h2 class="card-title">Inherent Powers</h2>
+            <h2 class="card-title" id="inherent-powers">Inherent Powers</h2>
             <div class="row mt-4">
                 <div class="col">
                     @foreach (var powerGroup in Model.PowerEntries.Where(pe => pe.PowerSetType == CBD.Enums.PowerSetType.Inherent && !string.IsNullOrEmpty(pe.PowerName))
@@ -197,15 +302,33 @@
                                     @foreach (var power in powerGroup)
                                     {
                                         <div class="col mt-2">
-                                            <div class="bg-primary p-1 rounded border border-dark-subtle border-3">
+                                            <div class=" p-1 rounded border border-dark-subtle border-3" style="background-image: url('/images/pslot2.png'); background-size: 100% 90%; background-repeat: no-repeat;">
                                                 <div class="text-left mb-1">
                                                     <h2 class="h5">@power.Level - @power.PowerNameDisplay</h2>
                                                 </div>
                                                 <div class="d-flex justify-content-left">
                                                     @foreach (var slotEntry in power.SlotEntries)
                                                     {
-                                                        <div class="rounded-circle bg-dark border border-warning border-3" data-bs-toggle="popover" data-bs-placement="bottom" data-bs-content="@slotEntry.Enhancement?.EnhancementName" style="width: 40px; height: 40px;"></div>
-
+                                                        <div class="rounded-circle bg-dark border border-warning border-3" data-bs-toggle="popover" data-bs-placement="bottom" data-bs-content="@slotEntry.Enhancement?.EnhancementName" style="width: 40px; height: 40px;">
+                                                            @{
+                                                                var enhancementName = slotEntry.Enhancement?.EnhancementName;
+                                                                var sanitizedEnhancementName = enhancementName?.Split(':')[0].Trim().Replace("'", "");
+                                                                if (!string.IsNullOrEmpty(sanitizedEnhancementName))
+                                                                {
+                                                                    sanitizedEnhancementName = sanitizedEnhancementName.Replace(" ", "");
+                                                                }
+                                                                var webRootPath = WebHostEnvironment.WebRootPath;
+                                                                var enhancementsDirectory = webRootPath + "/images/enhancements";
+                                                                if (sanitizedEnhancementName != null)
+                                                                {
+                                                                    var matchingImage = GetMatchingImage(enhancementsDirectory, sanitizedEnhancementName);
+                                                                }
+                                                                if (matchingImage != null)
+                                                                {
+                                                                    <img src="~/images/enhancements/@(matchingImage)" alt="@slotEntry.Enhancement?.EnhancementName" style="width: 100%; height: 100%;" />
+                                                                }
+                                                            }
+                                                        </div>
                                                     }
                                                 </div>
                                             </div>
