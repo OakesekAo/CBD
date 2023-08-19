@@ -76,13 +76,14 @@
 
 
     <div class="row mt-4">
+
         <div class="col col-md-4 border border-dark-subtle border-3">
             <h2 class="card-title" id="primary-powers">Primary Powers</h2>
             @foreach (var powerSet in Model.PowerSets.Where(ps => ps.Type == CBD.Enums.PowerSetType.Primary && !string.IsNullOrEmpty(ps.Name)))
             {
                 <div class="card my-2 text-light">
                     <div class="card-subtitle">
-                        <h4 class="mb-0">
+                        <h4 class="mb-0 text-dark">
                             @powerSet.NameDisplay
                         </h4>
                     </div>
@@ -100,7 +101,13 @@
                                             @foreach (var slotEntry in powerEntry.SlotEntries)
                                             {
                                                 <div class="slot-entry-container">
-                                                    <div class="rounded-circle" data-bs-toggle="popover" data-bs-placement="bottom" data-bs-content="@slotEntry.Enhancement?.EnhancementName" style="width: 40px; height: 40px;">
+                                                    <div class="rounded-circle"
+                                                    data-bs-toggle="popover"
+                                                    data-bs-placement="bottom"
+                                                    data-bs-trigger="hover"
+                                                    data-bs-content="@slotEntry.Enhancement?.EnhancementName" 
+                                                    style="width: 40px; height: 40px;">
+
                                                         @{
                                                             var enhancementName = slotEntry.Enhancement?.EnhancementName;
                                                             var sanitizedEnhancementName = enhancementName?.Split(':')[0].Trim().Replace("'", "");
@@ -134,13 +141,14 @@
                 </div>
             }
         </div>
+
         <div class="col col-md-4 border border-dark-subtle border-3">
             <h2 class="card-title" id="secondary-powers">Secondary Powers</h2>
             @foreach (var powerSet in Model.PowerSets.Where(ps => ps.Type == CBD.Enums.PowerSetType.Secondary && !string.IsNullOrEmpty(ps.Name)))
             {
                 <div class="card my-2 text-light">
                     <div class="card-subtitle">
-                        <h4 class="mb-0">
+                        <h4 class="mb-0 text-dark">
                             @powerSet.NameDisplay
                         </h4>
                     </div>
@@ -159,8 +167,13 @@
                                             @foreach (var slotEntry in powerEntry.SlotEntries)
                                             {
                                                 <div class="slot-entry-container">
-                                                    <div class="rounded-circle" data-bs-toggle="popover" data-bs-placement="bottom" data-bs-content="@slotEntry.Enhancement?.EnhancementName" style="width: 40px; height: 40px;">
-                                                        @{
+                                                    <div class="rounded-circle"
+                                             data-bs-toggle="popover"
+                                             data-bs-placement="bottom"
+                                             data-bs-trigger="hover"
+                                             data-bs-content="@slotEntry.Enhancement?.EnhancementName"
+                                             style="width: 40px; height: 40px;">
+                                                @{
                                                             var enhancementName = slotEntry.Enhancement?.EnhancementName;
                                                             var sanitizedEnhancementName = enhancementName?.Split(':')[0].Trim().Replace("'", "");
                                                             if (!string.IsNullOrEmpty(sanitizedEnhancementName))
@@ -192,35 +205,42 @@
                 </div>
             }
         </div>
+
         <div class="col col-md-4 border border-dark-subtle border-3">
-            <h2 class="card-title" id="epic-powers">Epic Powers</h2>
+
+            <h2 class="card-title" id="inherent-powers">Inherent Powers</h2>
             <div class="row mt-4">
                 <div class="col">
-                    @foreach (var powerSet in Model.PowerSets.Where(ps => ps.Type == CBD.Enums.PowerSetType.Epic && !string.IsNullOrEmpty(ps.Name)))
+                    @foreach (var powerGroup in Model.PowerEntries.Where(pe => pe.PowerSetType == CBD.Enums.PowerSetType.Inherent && !string.IsNullOrEmpty(pe.PowerName))
+                    .GroupBy(pe => pe.PowerName.Split('.')[1]))
                     {
                         <div class="card my-2 text-light">
                             <div class="card-subtitle">
-                                <h4 class="mb-0">
-                                    @powerSet.NameDisplay
+                                <h4 class="mb-0 text-dark">
+                                    @powerGroup.Key
                                 </h4>
                             </div>
 
-                            <div id="powerSet@powerSet">
+                            <div id="powerGroup@powerGroup.Key">
                                 <div class="card-body">
-                                    @foreach (var powerEntry in Model.PowerEntries.Where(pe => pe.PowerSetType == CBD.Enums.PowerSetType.Epic && !string.IsNullOrEmpty(pe.PowerName)))
+                                    @foreach (var power in powerGroup)
                                     {
                                         <div class="col mt-2">
-
                                             <div class=" p-1 rounded border border-dark-subtle border-3" style="background-image: url('/images/pslot2.png'); background-size: 100% 90%; background-repeat: no-repeat;">
                                                 <div class="text-center mb-1">
-                                                    <h2 class="h5">(@powerEntry.Level) - @powerEntry.PowerNameDisplay</h2>
+                                                    <h2 class="h5">(@power.Level) - @power.PowerNameDisplay</h2>
                                                 </div>
                                                 <div class="d-flex justify-content-left">
-                                                    @foreach (var slotEntry in powerEntry.SlotEntries)
+                                                    @foreach (var slotEntry in power.SlotEntries)
                                                     {
 
                                                         <div class="slot-entry-container">
-                                                            <div class="rounded-circle" data-bs-toggle="popover" data-bs-placement="bottom" data-bs-content="@slotEntry.Enhancement?.EnhancementName" style="width: 40px; height: 40px;">
+                                                            <div class="rounded-circle"
+                                                     data-bs-toggle="popover"
+                                                     data-bs-placement="bottom"
+                                                     data-bs-trigger="hover"
+                                                     data-bs-content="@slotEntry.Enhancement?.EnhancementName"
+                                                     style="width: 40px; height: 40px;">
                                                                 @{
                                                                     var enhancementName = slotEntry.Enhancement?.EnhancementName;
                                                                     var sanitizedEnhancementName = enhancementName?.Split(':')[0].Trim().Replace("'", "");
@@ -238,6 +258,7 @@
                                                                 }
                                                             </div>
                                                             <div class="subscript">@slotEntry.Level</div>
+
                                                             @if (slotEntry.Enhancement?.IoLevel != null)
                                                             {
                                                                 <sup class="superscript">@((slotEntry.Enhancement?.IoLevel + 1))</sup>
@@ -263,7 +284,7 @@
                     {
                         <div class="card my-2 text-light">
                             <div class="card-subtitle">
-                                <h4 class="mb-0">
+                                <h4 class="mb-0 text-dark">
                                     @powerSetGroup.Key
                                 </h4>
                             </div>
@@ -285,8 +306,13 @@
                                                             @foreach (var slotEntry in powerEntry.SlotEntries)
                                                             {
                                                                 <div class="slot-entry-container">
-                                                                    <div class="rounded-circle" data-bs-toggle="popover" data-bs-placement="bottom" data-bs-content="@slotEntry.Enhancement?.EnhancementName" style="width: 40px; height: 40px;">
-                                                                        @{
+                                                                    <div class="rounded-circle"
+                                                     data-bs-toggle="popover"
+                                                     data-bs-placement="bottom"
+                                                     data-bs-trigger="hover"
+                                                     data-bs-content="@slotEntry.Enhancement?.EnhancementName"
+                                                     style="width: 40px; height: 40px;">
+                                                                @{
                                                                             var enhancementName = slotEntry.Enhancement?.EnhancementName;
                                                                             var sanitizedEnhancementName = enhancementName?.Split(':')[0].Trim().Replace("'", "");
                                                                             if (!string.IsNullOrEmpty(sanitizedEnhancementName))
@@ -323,34 +349,39 @@
                 </div>
             </div>
 
-            <h2 class="card-title" id="inherent-powers">Inherent Powers</h2>
+            <h2 class="card-title" id="epic-powers">Epic Powers</h2>
             <div class="row mt-4">
                 <div class="col">
-                    @foreach (var powerGroup in Model.PowerEntries.Where(pe => pe.PowerSetType == CBD.Enums.PowerSetType.Inherent && !string.IsNullOrEmpty(pe.PowerName))
-                    .GroupBy(pe => pe.PowerName.Split('.')[1]))
+                    @foreach (var powerSet in Model.PowerSets.Where(ps => ps.Type == CBD.Enums.PowerSetType.Epic && !string.IsNullOrEmpty(ps.Name)))
                     {
                         <div class="card my-2 text-light">
                             <div class="card-subtitle">
-                                <h4 class="mb-0">
-                                    @powerGroup.Key
+                                <h4 class="mb-0 text-dark">
+                                    @powerSet.NameDisplay
                                 </h4>
                             </div>
 
-                            <div id="powerGroup@powerGroup.Key">
+                            <div id="powerSet@powerSet">
                                 <div class="card-body">
-                                    @foreach (var power in powerGroup)
+                                    @foreach (var powerEntry in Model.PowerEntries.Where(pe => pe.PowerSetType == CBD.Enums.PowerSetType.Epic && !string.IsNullOrEmpty(pe.PowerName)))
                                     {
                                         <div class="col mt-2">
+
                                             <div class=" p-1 rounded border border-dark-subtle border-3" style="background-image: url('/images/pslot2.png'); background-size: 100% 90%; background-repeat: no-repeat;">
                                                 <div class="text-center mb-1">
-                                                    <h2 class="h5">(@power.Level) - @power.PowerNameDisplay</h2>
+                                                    <h2 class="h5">(@powerEntry.Level) - @powerEntry.PowerNameDisplay</h2>
                                                 </div>
                                                 <div class="d-flex justify-content-left">
-                                                    @foreach (var slotEntry in power.SlotEntries)
+                                                    @foreach (var slotEntry in powerEntry.SlotEntries)
                                                     {
                                                         <div class="slot-entry-container">
-                                                            <div class="rounded-circle" data-bs-toggle="popover" data-bs-placement="bottom" data-bs-content="@slotEntry.Enhancement?.EnhancementName" style="width: 40px; height: 40px;">
-                                                                @{
+                                                            <div class="rounded-circle"
+                                                     data-bs-toggle="popover"
+                                                     data-bs-placement="bottom"
+                                                     data-bs-trigger="hover"
+                                                     data-bs-content="@slotEntry.Enhancement?.EnhancementName"
+                                                     style="width: 40px; height: 40px;">
+                                                        @{
                                                                     var enhancementName = slotEntry.Enhancement?.EnhancementName;
                                                                     var sanitizedEnhancementName = enhancementName?.Split(':')[0].Trim().Replace("'", "");
                                                                     if (!string.IsNullOrEmpty(sanitizedEnhancementName))
@@ -367,7 +398,6 @@
                                                                 }
                                                             </div>
                                                             <div class="subscript">@slotEntry.Level</div>
-
                                                             @if (slotEntry.Enhancement?.IoLevel != null)
                                                             {
                                                                 <sup class="superscript">@((slotEntry.Enhancement?.IoLevel + 1))</sup>
