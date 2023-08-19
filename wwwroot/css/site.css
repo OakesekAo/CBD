@@ -16,3 +16,38 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+.slot-entry-container {
+    display: inline-block;
+    position: relative;
+}
+
+.subscript {
+    position: absolute;
+    bottom: -15%; /* Adjust this value for vertical positioning */
+    left: 50%;
+    transform: translateX(-50%);
+    color: #39FF14;
+    font-size: 12px;
+    font-weight: bold;
+    z-index: 1;
+    text-align: center;
+    background-color: black; /* Background color for the numbers */
+    padding: 0px 2px; /* Adjust padding as needed */
+    border-radius: 5px; /* Rounded corners for the numbers */
+}
+
+.superscript {
+    position: absolute;
+    bottom: 90%; /* Adjust this value for vertical positioning */
+    left: 50%;
+    transform: translateX(-50%);
+    color: #7FFFD4;
+    font-size: 12px;
+    font-weight: bold;
+    z-index: 1;
+    text-align: center;
+    background-color: black; /* Background color for the numbers */
+    padding: 5px 2px; /* Adjust padding as needed */
+    border-radius: 5px; /* Rounded corners for the numbers */
+}
