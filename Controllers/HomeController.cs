@@ -259,7 +259,9 @@ namespace CBD.Controllers
 
             // Step 4: Pass the modified data and filename to the view
             ViewBag.Filename = $"{charBuildData.Class}_{charBuildData.Name.Replace(" ", "_")}";
-            return View(charBuildData);
+            return RedirectToAction("Details", "Builds", new { id = charBuildData.Id });
+
+
         }
 
 
