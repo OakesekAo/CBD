@@ -1,4 +1,5 @@
 ﻿@using System.Text;
+@using CBD.Services.Interfaces;
 @using Microsoft.AspNetCore.Hosting
 @using CBD.Enums
 @using CBD.Models
@@ -6,6 +7,7 @@
 
 @inject IWebHostEnvironment WebHostEnvironment
 
+@inject IImageService imageService
 
 @functions {
     private string GetMatchingImage(string directory, string partialName)
@@ -102,27 +104,32 @@
                                             {
                                                 <div class="slot-entry-container">
                                                     <div class="rounded-circle"
-                                                    data-bs-toggle="popover"
-                                                    data-bs-placement="bottom"
-                                                    data-bs-trigger="hover"
-                                                    data-bs-content="@slotEntry.Enhancement?.EnhancementName" 
-                                                    style="width: 40px; height: 40px;">
+                                             data-bs-toggle="popover"
+                                             data-bs-placement="bottom"
+                                             data-bs-trigger="hover"
+                                             data-bs-content="@slotEntry.Enhancement?.EnhancementName"
+                                             style="width: 40px; height: 40px;">
 
                                                         @{
                                                             var enhancementName = slotEntry.Enhancement?.EnhancementName;
                                                             var sanitizedEnhancementName = enhancementName?.Split(':')[0].Trim().Replace("'", "");
                                                             if (!string.IsNullOrEmpty(sanitizedEnhancementName))
                                                             {
-                                                                sanitizedEnhancementName = sanitizedEnhancementName.Replace(" ", "");
+                                                                sanitizedEnhancementName = sanitizedEnhancementName.Replace(" ", "_");
                                                             }
-                                                            var webRootPath = WebHostEnvironment.WebRootPath;
-                                                            var enhancementsDirectory = webRootPath + "/images/enhancements";
-                                                            var matchingImage = GetMatchingImage(enhancementsDirectory, sanitizedEnhancementName);
+
+                                                            var imageUrl = await imageService.EnhancementImageLookupAsync(sanitizedEnhancementName);
                                                         }
-                                                        @if (matchingImage != null)
+
+                                                        @if (!string.IsNullOrEmpty(imageUrl))
                                                         {
-                                                            <img src="~/images/enhancements/@(matchingImage)" alt="@slotEntry.Enhancement?.EnhancementName" style="width: 100%; height: 100%;" />
+                                                            <img src="@imageUrl" alt="@slotEntry.Enhancement?.EnhancementName" style="width: 100%; height: 100%;" />
                                                         }
+
+
+
+
+                                                        
                                                     </div>
                                                     <div class="subscript">@slotEntry.Level</div>
                                                     @if (slotEntry.Enhancement?.IoLevel != null)
@@ -173,7 +180,7 @@
                                              data-bs-trigger="hover"
                                              data-bs-content="@slotEntry.Enhancement?.EnhancementName"
                                              style="width: 40px; height: 40px;">
-                                                @{
+                                                        @{
                                                             var enhancementName = slotEntry.Enhancement?.EnhancementName;
                                                             var sanitizedEnhancementName = enhancementName?.Split(':')[0].Trim().Replace("'", "");
                                                             if (!string.IsNullOrEmpty(sanitizedEnhancementName))
@@ -312,7 +319,7 @@
                                                      data-bs-trigger="hover"
                                                      data-bs-content="@slotEntry.Enhancement?.EnhancementName"
                                                      style="width: 40px; height: 40px;">
-                                                                @{
+                                                                        @{
                                                                             var enhancementName = slotEntry.Enhancement?.EnhancementName;
                                                                             var sanitizedEnhancementName = enhancementName?.Split(':')[0].Trim().Replace("'", "");
                                                                             if (!string.IsNullOrEmpty(sanitizedEnhancementName))
@@ -381,7 +388,7 @@
                                                      data-bs-trigger="hover"
                                                      data-bs-content="@slotEntry.Enhancement?.EnhancementName"
                                                      style="width: 40px; height: 40px;">
-                                                        @{
+                                                                @{
                                                                     var enhancementName = slotEntry.Enhancement?.EnhancementName;
                                                                     var sanitizedEnhancementName = enhancementName?.Split(':')[0].Trim().Replace("'", "");
                                                                     if (!string.IsNullOrEmpty(sanitizedEnhancementName))

@@ -1,4 +1,8 @@
 ﻿using CBD.Services.Interfaces;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System.Text.Json.Nodes;
+using static Org.BouncyCastle.Crypto.Engines.SM2Engine;
 
 namespace CBD.Services
 {
@@ -7,6 +11,13 @@ namespace CBD.Services
 
         private readonly string[] suffixes = { "Bytes", "KB", "MB", "GB", "TB", "PB" };
         private readonly string defaultImage = "Iamge/Default.png";
+        private readonly IWebHostEnvironment _env;
+
+        public ImageService(IWebHostEnvironment env)
+        {
+            _env = env;
+        }
+
         public async Task<byte[]> ConvertFileToByteArrayAsync(IFormFile file)
         {
             try
@@ -52,5 +63,62 @@ namespace CBD.Services
                 throw;
             }
         }
+
+        public async Task<string> EnhancementImageLookupAsync(string enhancementName)
+        {
+            string jsonFilePath = Path.Combine(_env.ContentRootPath, "wwwroot", "json", "homecoming", "boost_sets", $"{enhancementName}.json");
+            string json = null; // Declare the variable outside the try block
+            string icon = null; // Declare the variable outside the try block
+
+            // Load JSON data from the file
+            try
+            {
+                json = File.ReadAllText(jsonFilePath);
+                // Now you have the JSON content in the 'json' variable and can deserialize it.
+            }
+            catch (Exception ex)
+            {
+                // Handle or log the exception
+                Console.WriteLine($"Error reading JSON file: {ex.Message}");
+                // Return a default icon URL or handle the case when JSON data is missing or invalid
+                icon = $"IO_{enhancementName.ToString().Replace(" ", "_")}.png";
+            }
+
+            // Parse the JSON using JObject from Newtonsoft.Json
+            JObject jsonData = JObject.Parse(json);
+
+            JArray conversionGroups = jsonData["conversion_groups"] as JArray;
+
+                    string rarity = conversionGroups[0].ToString();
+
+            switch (rarity)
+            {
+                case "Rarity: Archetype":
+                case "Rarity: Superior Archetype":
+                    icon = $"AO_{jsonData["display_name"].ToString().Replace(" ", "_")}.png";
+                    break;
+                case "Rarity: Summer Blockbuster Double Feature":
+                    icon = $"SBB_{jsonData["display_name"].ToString().Replace(" ", "_")}.png";
+                    break;
+                case "Rarity: Winter Pack Series":
+                case "Rarity: Superior Winter Pack Series":
+                    icon = $"WO_{jsonData["display_name"].ToString().Replace(" ", "_")}.png";
+                    break;
+                default:
+                    icon = $"IO_{jsonData["display_name"].ToString().Replace(" ", "_")}.png";
+                    break;
+            }
+                // Construct the icon URL
+                string iconUrl = $"/images/icon/boosts/sets/{icon}";
+                return iconUrl;
+
+            
+
+            // Return a default icon URL or handle the case when JSON data is missing or invalid
+            //return "/images/unknown.png";
+        }
+
     }
+
+
 }
