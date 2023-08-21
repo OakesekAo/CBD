@@ -129,7 +129,7 @@
 
 
 
-                                                        
+
                                                     </div>
                                                     <div class="subscript">@slotEntry.Level</div>
                                                     @if (slotEntry.Enhancement?.IoLevel != null)
@@ -251,12 +251,13 @@
                                                                 @{
                                                                     var enhancementName = slotEntry.Enhancement?.EnhancementName;
                                                                     var sanitizedEnhancementName = enhancementName?.Split(':')[0].Trim().Replace("'", "");
+                                                                    var imageUrl = "";
                                                                     if (!string.IsNullOrEmpty(sanitizedEnhancementName))
                                                                     {
                                                                         sanitizedEnhancementName = sanitizedEnhancementName.Replace(" ", "_");
-                                                                    }
 
-                                                                    var imageUrl = await imageService.EnhancementImageLookupAsync(sanitizedEnhancementName);
+                                                                        imageUrl = await imageService.EnhancementImageLookupAsync(sanitizedEnhancementName);
+                                                                    }
                                                                 }
 
                                                                 @if (!string.IsNullOrEmpty(imageUrl))

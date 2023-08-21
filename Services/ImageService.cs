@@ -66,7 +66,20 @@ namespace CBD.Services
 
         public async Task<string> EnhancementImageLookupAsync(string enhancementName)
         {
-            string jsonFilePath = "wwwroot/json/homecoming/boost_sets/" + enhancementName + ".json";
+            string jsonFilePath = null;
+            if (string.IsNullOrWhiteSpace(enhancementName))
+            {
+                // Set a default icon and return it
+                return "/images/unknown.png";
+            }
+            else
+            {
+                // Generate the JSON file path
+                jsonFilePath = "wwwroot/json/homecoming/boost_sets/" + enhancementName.ToLower() + ".json";
+
+                // Rest of your code for processing the JSON file
+                // ...
+            }
 
             string json = null; // Declare the variable outside the try block
             string icon = null; // Declare the variable outside the try block
