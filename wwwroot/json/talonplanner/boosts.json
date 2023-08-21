@@ -1,0 +1,211 @@
+{
+  "generics": [
+    {
+      "name": "Accuracy",
+      "type": "Enhance Accuracy",
+      "icon": "IO_Accuracy.png"
+    },
+    {
+      "name": "Confusion",
+      "type": "Enhance Confuse",
+      "icon": "IO_Confusion_Duration.png"
+    },
+    { "name": "Damage", "type": "Enhance Damage", "icon": "IO_Damage.png" },
+    {
+      "name": "Defense Buff",
+      "type": "Enhance Defense",
+      "icon": "IO_Defense_Buff.png"
+    },
+    {
+      "name": "Defense DeBuff",
+      "type": "Enhance Defense DeBuff",
+      "icon": "IO_Defense_DeBuff.png"
+    },
+    {
+      "name": "Endurance Reduction",
+      "type": "Reduce Endurance Cost",
+      "icon": "IO_Endurance_Cost.png"
+    },
+    {
+      "name": "Fear Duration",
+      "type": "Enhance Fear",
+      "icon": "IO_Fear_Duration.png"
+    },
+    {
+      "name": "Flight Speed",
+      "type": "Enhance Flying Speed",
+      "icon": "IO_Flight_Speed.png"
+    },
+    { "name": "Healing", "type": "Enhance Heal", "icon": "IO_Heal.png" },
+    {
+      "name": "Hold Duration",
+      "type": "Enhance Hold",
+      "icon": "IO_Hold_Duration.png"
+    },
+    {
+      "name": "Immobilization Duration",
+      "type": "Enhance Immobilization",
+      "icon": "IO_Immobilization_Duration.png"
+    },
+    {
+      "name": "Intangibility",
+      "type": "Enhance Intangibility Duration",
+      "icon": "IO_Intangibility_Duration.png"
+    },
+    {
+      "name": "Activation Acceleration",
+      "type": "Reduce Interrupt Time",
+      "icon": "IO_Interrupt_Time.png"
+    },
+    { "name": "Jumping", "type": "Enhance Jump", "icon": "IO_Jump.png" },
+    {
+      "name": "Knockback Distance",
+      "type": "Enhance KnockBack",
+      "icon": "IO_KnockBack_Distance.png"
+    },
+    {
+      "name": "Range Increase",
+      "type": "Enhance Range",
+      "icon": "IO_Range.png"
+    },
+    {
+      "name": "Recharge Reduction",
+      "type": "Enhance Recharge Speed",
+      "icon": "IO_Attack_Rate.png"
+    },
+    {
+      "name": "Endurance Modification",
+      "type": "Enhance Endurance Modification",
+      "icon": "IO_Endurance_Modification.png"
+    },
+    {
+      "name": "Resist Damage",
+      "type": "Enhance Damage Resistance",
+      "icon": "IO_Damage_Resistance.png"
+    },
+    {
+      "name": "Run Speed Increase",
+      "type": "Enhance Running Speed",
+      "icon": "IO_Running_Speed.png"
+    },
+    {
+      "name": "Sleep Duration",
+      "type": "Enhance Sleep",
+      "icon": "IO_Sleep_Duration.png"
+    },
+    {
+      "name": "Slow",
+      "type": "Enhance Slow Movement",
+      "icon": "IO_Slow_Powers.png"
+    },
+    {
+      "name": "Disorient Duration",
+      "type": "Enhance Disorient",
+      "icon": "IO_Disorient_Duration.png"
+    },
+    {
+      "name": "Taunt Duration",
+      "type": "Enhance Threat Duration",
+      "icon": "IO_Taunt_Effectiveness.png"
+    },
+    {
+      "name": "ToHit Buff",
+      "type": "Enhance ToHit Buffs",
+      "icon": "IO_ToHit_Buffs.png"
+    },
+    {
+      "name": "Accuracy DeBuff",
+      "type": "Enhance ToHit DeBuffs",
+      "icon": "IO_ToHit_DeBuffs.png"
+    },
+    {
+      "name": "Magic Boost",
+      "type": "Magic_Boost",
+      "icon": "Originicon_magic.png"
+    },
+    {
+      "name": "Mutation Boost",
+      "type": "Mutation_Boost",
+      "icon": "Originicon_mutation.png"
+    },
+    {
+      "name": "Natural Boost",
+      "type": "Natural_Boost",
+      "icon": "Originicon_natural.png"
+    },
+    {
+      "name": "Science Boost",
+      "type": "Science_Boost",
+      "icon": "Originicon_science.png"
+    },
+    {
+      "name": "Technology Boost",
+      "type": "Technology_Boost",
+      "icon": "Originicon_technology.png"
+    }
+  ],
+  "categories": [
+    {
+      "name": "Accurate Defense Debuff",
+      "icon": "accurate_debuff_defense_sets.png"
+    },
+    { "name": "Accurate Healing", "icon": "IO_Accurate_Healing.png" },
+    {
+      "name": "Accurate To-Hit Debuff",
+      "icon": "accurate_debuff_tohit_sets.png"
+    },
+    { "name": "Blaster Archetype Sets", "icon": "blaster_at_sets.png" },
+    { "name": "Brute Archetype Sets", "icon": "brute_at_sets.png" },
+    { "name": "Confuse", "icon": "IO_Confuse.png" },
+    { "name": "Controller Archetype Sets", "icon": "controller_at_sets.png" },
+    { "name": "Corruptor Archetype Sets", "icon": "corruptor_at_sets.png" },
+    { "name": "Defender Archetype Sets", "icon": "defender_at_sets.png" },
+    { "name": "Defense Debuff", "icon": "IO_Defense_DeBuff.png" },
+    { "name": "Defense Sets", "icon": "IO_Defense_Buff.png" },
+    { "name": "Dominator Archetype Sets", "icon": "dominator_at_sets.png" },
+    {
+      "name": "Endurance Modification",
+      "icon": "IO_Endurance_Modification.png"
+    },
+    { "name": "Fear", "icon": "IO_Fear_Duration.png" },
+    { "name": "Flight", "icon": "IO_Flight_Speed.png" },
+    { "name": "Healing", "icon": "IO_Heal.png" },
+    { "name": "Holds", "icon": "IO_Hold_Duration.png" },
+    { "name": "Immobilize", "icon": "IO_Immobilization_Duration.png" },
+    { "name": "Kheldian Archetype Sets", "icon": "kheldian_at_sets.png" },
+    { "name": "Knockback", "icon": "IO_KnockBack_Distance.png" },
+    { "name": "Leaping", "icon": "IO_Jump.png" },
+    { "name": "Leaping & Sprints", "icon": "IO_Jump.png" },
+    { "name": "Mastermind Archetype Sets", "icon": "mastermind_at_sets.png" },
+    { "name": "Melee AoE Damage", "icon": "pbaoe_damage_sets.png" },
+    { "name": "Melee Damage", "icon": "melee_damage_sets.png" },
+    { "name": "Pet Damage", "icon": "pet_damage_sets.png" },
+    { "name": "Ranged AoE Damage", "icon": "taoe_damage_sets.png" },
+    { "name": "Ranged Damage", "icon": "ranged_damage_sets.png" },
+    {
+      "name": "Recharge Intensive Pets",
+      "icon": "recharge_intensive_pet_sets.png"
+    },
+    { "name": "Resist Damage", "icon": "IO_Damage_Resistance.png" },
+    { "name": "Running", "icon": "IO_Running_Speed.png" },
+    { "name": "Running & Sprints", "icon": "IO_Running_Speed.png" },
+    { "name": "Scrapper Archetype Sets", "icon": "scrapper_at_sets.png" },
+    { "name": "Sentinel Archetype Sets", "icon": "sentinel_at_sets.png" },
+    { "name": "Sleep", "icon": "IO_Sleep_Duration.png" },
+    { "name": "Slow Movement", "icon": "IO_Slow_Powers.png" },
+    { "name": "Sniper Attacks", "icon": "sniper_sets.png" },
+    {
+      "name": "Soldiers of Arachnos Archetype Sets",
+      "icon": "soa_at_sets.png"
+    },
+    { "name": "Stalker Archetype Sets", "icon": "stalker_at_sets.png" },
+    { "name": "Stuns", "icon": "IO_Disorient_Duration.png" },
+    { "name": "Tanker Archetype Sets", "icon": "tanker_at_sets.png" },
+    { "name": "Teleport", "icon": "IO_Teleportation.png" },
+    { "name": "Threat Duration", "icon": "IO_Taunt_Effectiveness.png" },
+    { "name": "To Hit Buff", "icon": "IO_ToHit_Buffs.png" },
+    { "name": "To Hit Debuff", "icon": "IO_ToHit_DeBuffs.png" },
+    { "name": "Universal Damage Sets", "icon": "universal_damage_sets.png" },
+    { "name": "Universal Travel", "icon": "universal_travel_sets.png" }
+  ]
+}
