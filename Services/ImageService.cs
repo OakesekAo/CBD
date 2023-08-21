@@ -81,7 +81,8 @@ namespace CBD.Services
                 // Handle or log the exception
                 Console.WriteLine($"Error reading JSON file: {ex.Message}");
                 // Return a default icon URL or handle the case when JSON data is missing or invalid
-                icon = $"IO_{enhancementName.ToString().Replace(" ", "_")}.png";
+                ///This needs to handle reg IOs and HOs
+                return "/images/unknown.png";
             }
 
             // Parse the JSON using JObject from Newtonsoft.Json
