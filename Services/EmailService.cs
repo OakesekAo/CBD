@@ -50,7 +50,7 @@ namespace CBD.Services
                 var password = _mailSettings.EmailPassword ?? Environment.GetEnvironmentVariable("EmailPassword");
 
                 //turned None for now, gmail needs StartTls
-                await smtpClient.ConnectAsync(host, port, _mailSettings.TLS ? SecureSocketOptions.StartTls : SecureSocketOptions.None);
+                await smtpClient.ConnectAsync(host, port, SecureSocketOptions.StartTls);
 
 
                 if (password != "")
