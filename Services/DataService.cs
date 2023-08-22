@@ -55,9 +55,8 @@ namespace CBD.Services
             {
                 Email = "o@o.com",
                 UserName = "o@o.com",
-                FirstName = "Andrew",
-                LastName = "O",
-                GlobalName = "@Andrew",
+                Name = "Admin",
+                GlobalName = "@Admin",
                 EmailConfirmed = true
             };
 
@@ -71,9 +70,8 @@ namespace CBD.Services
             {
                 Email = "mod@o.com",
                 UserName = "mod@o.com",
-                FirstName = "AndrewMod",
-                LastName = "O",
-                GlobalName = "@AndrewMod",
+                Name = "Mod",
+                GlobalName = "@Mod",
                 EmailConfirmed = true
             };
 
