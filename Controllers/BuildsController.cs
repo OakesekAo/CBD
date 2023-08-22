@@ -93,7 +93,7 @@ namespace CBD.Controllers
 
             // Step 4: Pass the modified data and filename to the view
             ViewBag.Filename = tempFilename;
-            return View(charBuildData);
+            return RedirectToAction("Details", "Builds", new { id = charBuildData.Id });
         }
 
 
@@ -246,50 +246,5 @@ namespace CBD.Controllers
             return (_context.Build?.Any(e => e.Id == id)).GetValueOrDefault();
         }
 
-        public class PowerSetsConverter : Newtonsoft.Json.JsonConverter<PowerSets[]>
-        {
-            public override PowerSets[] ReadJson(JsonReader reader, Type objectType, PowerSets[] existingValue, bool hasExistingValue, JsonSerializer serializer)
-            {
-                var token = JToken.Load(reader);
-                var powerSets = token.Select(t => new PowerSets
-                {
-                    Name = t.Value<string>(),
-                    NameDisplay = StripAndFormatName(t.Value<string>()),
-                    Type = DeterminePowerSetType(t.Path)
-                }).ToArray();
-
-                return powerSets;
-            }
-
-            public override void WriteJson(JsonWriter writer, PowerSets[] value, JsonSerializer serializer)
-            {
-                throw new NotImplementedException();
-            }
-
-            private string StripAndFormatName(string rawName)
-            {
-                return rawName.Substring(rawName.IndexOf('.') + 1).Replace('_', ' ');
-            }
-
-            private PowerSetType DeterminePowerSetType(string path)
-            {
-                if (path.EndsWith("[0]"))
-                {
-                    return PowerSetType.Primary;
-                }
-                else if (path.EndsWith("[1]"))
-                {
-                    return PowerSetType.Secondary;
-                }
-                else if (path.EndsWith("[3]") || path.EndsWith("[4]") || path.EndsWith("[5]") || path.EndsWith("[6]"))
-                {
-                    return PowerSetType.Pool;
-                }
-                else
-                {
-                    return PowerSetType.Epic;
-                }
-            }
-        }
     }
 }

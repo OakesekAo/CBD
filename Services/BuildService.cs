@@ -42,7 +42,7 @@ namespace CBD.Services
             };
            Build charBuildData = JsonConvert.DeserializeObject<Build>(jsonData, settings);
 
-            if (charBuildData.Name == null)
+            if (string.IsNullOrWhiteSpace(charBuildData.Name))
             {
                 charBuildData.Name = ImportFileName;
             }
@@ -238,9 +238,10 @@ namespace CBD.Services
 
 
         //Custom json mapping
-        public class PowerSetsConverter : Newtonsoft.Json.JsonConverter<PowerSets[]>
+
+        public class PowerSetsConverter : JsonConverter<List<PowerSets>>
         {
-            public override PowerSets[] ReadJson(JsonReader reader, Type objectType, PowerSets[] existingValue, bool hasExistingValue, JsonSerializer serializer)
+            public override List<PowerSets> ReadJson(JsonReader reader, Type objectType, List<PowerSets> existingValue, bool hasExistingValue, JsonSerializer serializer)
             {
                 var token = JToken.Load(reader);
                 var powerSets = token.Select(t => new PowerSets
@@ -248,15 +249,18 @@ namespace CBD.Services
                     Name = t.Value<string>(),
                     NameDisplay = StripAndFormatName(t.Value<string>()),
                     Type = DeterminePowerSetType(t.Path)
-                }).ToArray();
+                }).ToList();
 
                 return powerSets;
             }
 
-            public override void WriteJson(JsonWriter writer, PowerSets[] value, JsonSerializer serializer)
+            public override void WriteJson(JsonWriter writer, List<PowerSets>? value, JsonSerializer serializer)
             {
                 throw new NotImplementedException();
             }
+
+
+
 
             private string StripAndFormatName(string rawName)
             {
