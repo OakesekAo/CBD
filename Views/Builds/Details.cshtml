@@ -9,40 +9,14 @@
 
 @inject IImageService imageService
 
-@functions {
-    private string GetMatchingImage(string directory, string partialName)
-    {
-        if (string.IsNullOrEmpty(partialName))
-        {
-            return "unknown.png";
-        }
-
-        var imageFiles = Directory.GetFiles(directory, "*.png");
-
-        foreach (var imagePath in imageFiles)
-        {
-            var imageName = imagePath.Substring(imagePath.LastIndexOf('\\') + 1);
-
-            if (imageName != null && imageName.Contains(partialName))
-            {
-                return imageName;
-            }
-        }
-
-        return "unknown.png";
-    }
-
-
-
-}
 
 <div class="container mt-4">
     <div class="row">
         <div class="col">
-            <h1>
+            <h3>
                 Name: @Model.Name
-            </h1>
-            <h3>Class: <img src="~/images/archetypes/@($"{Model.Class}.png")" /> @Model.ClassDisplay</h3>
+            </h3>
+            <h4>Class: <img src="~/images/archetypes/@($"{Model.Class}.png")" /> @Model.ClassDisplay</h4>
 
             <p>Comment: @Model.Comment</p>
         </div>
@@ -64,10 +38,10 @@
     <nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top mt-2">
         <div class="container-fluid d-flex justify-content-center">
             <div class="d-flex flex-wrap justify-content-between">
-                <a class="nav-link" href="#primary-powers">Primary&nbsp;|&nbsp;</a>
-                <a class="nav-link" href="#secondary-powers">Secondary&nbsp;|&nbsp;</a>
-                <a class="nav-link" href="#epic-powers">Epic&nbsp;|&nbsp;</a>
-                <a class="nav-link" href="#pool-powers">Pool&nbsp;|&nbsp;</a>
+                <a class="nav-link" href="#primary-powers">Primary</a>
+                <a class="nav-link" href="#secondary-powers">Secondary</a>
+                <a class="nav-link" href="#epic-powers">Epic&nbsp</a>
+                <a class="nav-link" href="#pool-powers">Pool&nbsp</a>
                 <a class="nav-link" href="#inherent-powers">Inherent</a>
             </div>
         </div>
@@ -161,13 +135,12 @@
                     </div>
 
                     <div id="powerSet@powerSet">
-                        <div class="card-body">
+                        <div class="card-text">
                             @foreach (var powerEntry in Model.PowerEntries.Where(pe => pe.PowerSetType == CBD.Enums.PowerSetType.Secondary && !string.IsNullOrEmpty(pe.PowerName)))
                             {
                                 <div class="col mt-2">
-
                                     <div class=" p-1 rounded border border-dark-subtle border-3" style="background-image: url('/images/pslot2.png'); background-size: 100% 90%; background-repeat: no-repeat;">
-                                        <div class="text-center mb-1">
+                                        <div class="text-center mb-1 mt-1">
                                             <h2 class="h5">(@powerEntry.Level) - @powerEntry.PowerNameDisplay</h2>
                                         </div>
                                         <div class="d-flex justify-content-left">
@@ -180,6 +153,7 @@
                                              data-bs-trigger="hover"
                                              data-bs-content="@slotEntry.Enhancement?.EnhancementName"
                                              style="width: 40px; height: 40px;">
+
                                                         @{
                                                             var enhancementName = slotEntry.Enhancement?.EnhancementName;
                                                             var sanitizedEnhancementName = enhancementName?.Split(':')[0].Trim().Replace("'", "");
@@ -195,6 +169,11 @@
                                                         {
                                                             <img src="@imageUrl" alt="@slotEntry.Enhancement?.EnhancementName" style="width: 100%; height: 100%;" />
                                                         }
+
+
+
+
+
                                                     </div>
                                                     <div class="subscript">@slotEntry.Level</div>
                                                     @if (slotEntry.Enhancement?.IoLevel != null)
@@ -202,6 +181,7 @@
                                                         <sup class="superscript">@((slotEntry.Enhancement?.IoLevel + 1))</sup>
                                                     }
                                                 </div>
+
                                             }
                                         </div>
                                     </div>
@@ -215,32 +195,29 @@
 
         <div class="col col-md-4 border border-dark-subtle border-3">
 
-            <h2 class="card-title" id="inherent-powers">Inherent Powers</h2>
-            <div class="row mt-4">
-                <div class="col">
-                    @foreach (var powerGroup in Model.PowerEntries.Where(pe => pe.PowerSetType == CBD.Enums.PowerSetType.Inherent && !string.IsNullOrEmpty(pe.PowerName))
-                    .GroupBy(pe => pe.PowerName.Split('.')[1]))
+            <h2 class="card-title" id="epic-powers">Epic Powers</h2>
+                     @foreach (var powerSet in Model.PowerSets.Where(ps => ps.Type == CBD.Enums.PowerSetType.Epic && !string.IsNullOrEmpty(ps.Name)))
                     {
                         <div class="card my-2 text-light">
                             <div class="card-subtitle">
                                 <h4 class="mb-0 text-dark">
-                                    @powerGroup.Key
+                                    @powerSet.NameDisplay
                                 </h4>
                             </div>
 
-                            <div id="powerGroup@powerGroup.Key">
-                                <div class="card-body">
-                                    @foreach (var power in powerGroup)
+                            <div id="powerSet@powerSet">
+                        <div class="card-text">
+                                    @foreach (var powerEntry in Model.PowerEntries.Where(pe => pe.PowerSetType == CBD.Enums.PowerSetType.Epic && !string.IsNullOrEmpty(pe.PowerName)))
                                     {
                                         <div class="col mt-2">
+
                                             <div class=" p-1 rounded border border-dark-subtle border-3" style="background-image: url('/images/pslot2.png'); background-size: 100% 90%; background-repeat: no-repeat;">
                                                 <div class="text-center mb-1">
-                                                    <h2 class="h5">(@power.Level) - @power.PowerNameDisplay</h2>
+                                                    <h2 class="h5">(@powerEntry.Level) - @powerEntry.PowerNameDisplay</h2>
                                                 </div>
                                                 <div class="d-flex justify-content-left">
-                                                    @foreach (var slotEntry in power.SlotEntries)
+                                                    @foreach (var slotEntry in powerEntry.SlotEntries)
                                                     {
-
                                                         <div class="slot-entry-container">
                                                             <div class="rounded-circle"
                                                      data-bs-toggle="popover"
@@ -265,7 +242,6 @@
                                                                 }
                                                             </div>
                                                             <div class="subscript">@slotEntry.Level</div>
-
                                                             @if (slotEntry.Enhancement?.IoLevel != null)
                                                             {
                                                                 <sup class="superscript">@((slotEntry.Enhancement?.IoLevel + 1))</sup>
@@ -280,12 +256,10 @@
                             </div>
                         </div>
                     }
-                </div>
-            </div>
+  
 
             <h2 class="card-title" id="pool-powers">Pool Powers</h2>
-            <div class="row mt-4">
-                <div class="col">
+ 
                     @foreach (var powerSetGroup in Model.PowerSets.Where(ps => ps.Type == CBD.Enums.PowerSetType.Pool && !string.IsNullOrEmpty(ps.Name))
                     .GroupBy(ps => ps.Name.Split('.')[1]))
                     {
@@ -297,7 +271,7 @@
                             </div>
 
                             <div id="powerSetGroup@powerSetGroup.Key">
-                                <div class="card-body">
+                                <div class="card-text">
                                     @foreach (var powerSet in powerSetGroup)
                                     {
                                         foreach (var powerEntry in Model.PowerEntries.Where(pe => pe.PowerSetType == CBD.Enums.PowerSetType.Pool && !string.IsNullOrEmpty(pe.PowerName)))
@@ -353,34 +327,32 @@
                         </div>
                     }
 
-                </div>
-            </div>
 
-            <h2 class="card-title" id="epic-powers">Epic Powers</h2>
-            <div class="row mt-4">
-                <div class="col">
-                    @foreach (var powerSet in Model.PowerSets.Where(ps => ps.Type == CBD.Enums.PowerSetType.Epic && !string.IsNullOrEmpty(ps.Name)))
+            <h2 class="card-title" id="inherent-powers">Inherent Powers</h2>
+
+                    @foreach (var powerGroup in Model.PowerEntries.Where(pe => pe.PowerSetType == CBD.Enums.PowerSetType.Inherent && !string.IsNullOrEmpty(pe.PowerName))
+                    .GroupBy(pe => pe.PowerName.Split('.')[1]))
                     {
                         <div class="card my-2 text-light">
                             <div class="card-subtitle">
                                 <h4 class="mb-0 text-dark">
-                                    @powerSet.NameDisplay
+                                    @powerGroup.Key
                                 </h4>
                             </div>
 
-                            <div id="powerSet@powerSet">
-                                <div class="card-body">
-                                    @foreach (var powerEntry in Model.PowerEntries.Where(pe => pe.PowerSetType == CBD.Enums.PowerSetType.Epic && !string.IsNullOrEmpty(pe.PowerName)))
+                            <div id="powerGroup@powerGroup.Key">
+                                <div class="card-text">
+                                    @foreach (var power in powerGroup)
                                     {
                                         <div class="col mt-2">
-
                                             <div class=" p-1 rounded border border-dark-subtle border-3" style="background-image: url('/images/pslot2.png'); background-size: 100% 90%; background-repeat: no-repeat;">
                                                 <div class="text-center mb-1">
-                                                    <h2 class="h5">(@powerEntry.Level) - @powerEntry.PowerNameDisplay</h2>
+                                                    <h2 class="h5">(@power.Level) - @power.PowerNameDisplay</h2>
                                                 </div>
                                                 <div class="d-flex justify-content-left">
-                                                    @foreach (var slotEntry in powerEntry.SlotEntries)
+                                                    @foreach (var slotEntry in power.SlotEntries)
                                                     {
+
                                                         <div class="slot-entry-container">
                                                             <div class="rounded-circle"
                                                      data-bs-toggle="popover"
@@ -405,6 +377,7 @@
                                                                 }
                                                             </div>
                                                             <div class="subscript">@slotEntry.Level</div>
+
                                                             @if (slotEntry.Enhancement?.IoLevel != null)
                                                             {
                                                                 <sup class="superscript">@((slotEntry.Enhancement?.IoLevel + 1))</sup>
@@ -419,8 +392,6 @@
                             </div>
                         </div>
                     }
-                </div>
-            </div>
 
         </div>
     </div>
