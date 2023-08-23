@@ -22,7 +22,7 @@ namespace CBD.Controllers
         // GET: Comments
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Comment.Include(c => c.Build).Include(c => c.CBDUser).Include(c => c.Moderator);
+            var applicationDbContext = _context.Comment?.Include(c => c.Build).Include(c => c.CBDUser).Include(c => c.Moderator);
             return View(await applicationDbContext.ToListAsync());
         }
 

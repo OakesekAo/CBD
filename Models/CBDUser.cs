@@ -8,34 +8,16 @@ namespace CBD.Models
     public class CBDUser : IdentityUser
     {
         [Required]
-        [Display(Name = "First Name")]
+        [Display(Name = "Name")]
         [StringLength(50, ErrorMessage = "The {0} must be at least {2} and a max of {1} characters long", MinimumLength = 2)]
-        public string? FirstName { get; set; }
-
-       
-        [Display(Name = "Last Name")]
-        [StringLength(50, ErrorMessage = "The {0} must be at least {2} and a max of {1} characters long", MinimumLength = 2)]
-        public string? LastName { get; set; }
+        public string? Name { get; set; }
 
 
+        [Required]
         [Display(Name = "@Global")]
         [StringLength(50, ErrorMessage = "The {0} must be at least {2} and a max of {1} characters long", MinimumLength = 4)]
         public string? GlobalName { get; set; }
 
-        [NotMapped]
-        [DataType(DataType.Upload)]
-        public IFormFile? AvatarFormFile { get; set; }
-
-        [DisplayName("Avatar")]
-        public string? AvatarFileName { get; set; }
-
-        public byte[]? AvatarFileData { get; set; }
-
-        [DisplayName("File Extension")]
-        public string? AvatarContentType { get; set; }
-
-        [NotMapped]
-        public string? FullName { get { return $"{FirstName} {LastName}"; } }
 
         public virtual ICollection<Server> Servers { get; set; } = new HashSet<Server>();
         public virtual ICollection<Build> Builds { get; set; } = new HashSet<Build>();

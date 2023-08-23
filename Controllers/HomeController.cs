@@ -48,7 +48,7 @@ namespace CBD.Controllers
 
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> BuildImport(IFormFile jsonFile, string jsonData)
+        public async Task<IActionResult> BuildImport(IFormFile jsonFile, string jsonData, string ImportFileName, string userId)
         {
 
 
@@ -68,9 +68,11 @@ namespace CBD.Controllers
             };
             Build charBuildData = JsonConvert.DeserializeObject<Build>(jsonData, settings);
 
-            CBDUser cbdUser = await _userManager.GetUserAsync(User);
-            charBuildData.CBDUser = cbdUser;
-            charBuildData.CBDUserId = cbdUser.Id;
+            if (charBuildData.Name == null)
+            {
+                charBuildData.Name = ImportFileName;
+            }
+            charBuildData.CBDUserId = userId;
 
             // Assign the raw JSON to the property
             charBuildData.RawJson = jsonData;
@@ -241,8 +243,7 @@ namespace CBD.Controllers
             {
                 // Create a new Server entity if not found
                 server = new Server { Name = charBuildData.BuiltWith.Database };
-                server.CBDUser = cbdUser;
-                server.CBDUserId = cbdUser.Id;
+                server.CBDUserId = userId;
                 _context.Server.Add(server);
                 await _context.SaveChangesAsync();
             }

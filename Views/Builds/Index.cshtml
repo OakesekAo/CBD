@@ -7,7 +7,7 @@
 <h1>Index</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="ImportJSON">Import New</a>
 </p>
 <table class="table">
     <thead>
@@ -76,7 +76,7 @@
                 @Html.DisplayFor(modelItem => item.Server.Name)
             </td>
             <td>
-                @*@Html.DisplayFor(modelItem => item.CBDUser.UserName)*@
+                @Html.DisplayFor(modelItem => item.CBDUser.GlobalName)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
