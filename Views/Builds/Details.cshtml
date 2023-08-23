@@ -69,7 +69,7 @@
                             @foreach (var powerEntry in Model.PowerEntries.Where(pe => pe.PowerSetType == CBD.Enums.PowerSetType.Primary && !string.IsNullOrEmpty(pe.PowerName)))
                             {
                                 <div class="col mt-2">
-                                    <div class=" p-1 rounded border border-dark-subtle border-3" style="background-image: url('/images/pslot2.png'); background-size: 100% 90%; background-repeat: no-repeat;">
+                                    <div class=" p-1 rounded border border-dark-subtle border-3" style="background-image: url('/images/pSlot2.png'); background-size: 100% 90%; background-repeat: no-repeat;">
                                         <div class="text-center mb-1 mt-1">
                                             <h2 class="h5">(@powerEntry.Level) - @powerEntry.PowerNameDisplay</h2>
                                         </div>
@@ -139,7 +139,7 @@
                             @foreach (var powerEntry in Model.PowerEntries.Where(pe => pe.PowerSetType == CBD.Enums.PowerSetType.Secondary && !string.IsNullOrEmpty(pe.PowerName)))
                             {
                                 <div class="col mt-2">
-                                    <div class=" p-1 rounded border border-dark-subtle border-3" style="background-image: url('/images/pslot2.png'); background-size: 100% 90%; background-repeat: no-repeat;">
+                                    <div class=" p-1 rounded border border-dark-subtle border-3" style="background-image: url('/images/pSlot2.png'); background-size: 100% 90%; background-repeat: no-repeat;">
                                         <div class="text-center mb-1 mt-1">
                                             <h2 class="h5">(@powerEntry.Level) - @powerEntry.PowerNameDisplay</h2>
                                         </div>
@@ -211,7 +211,7 @@
                                     {
                                         <div class="col mt-2">
 
-                                            <div class=" p-1 rounded border border-dark-subtle border-3" style="background-image: url('/images/pslot2.png'); background-size: 100% 90%; background-repeat: no-repeat;">
+                                            <div class=" p-1 rounded border border-dark-subtle border-3" style="background-image: url('/images/pSlot2.png'); background-size: 100% 90%; background-repeat: no-repeat;">
                                                 <div class="text-center mb-1">
                                                     <h2 class="h5">(@powerEntry.Level) - @powerEntry.PowerNameDisplay</h2>
                                                 </div>
@@ -280,7 +280,7 @@
                                             if (powerEntry.PowerName.StartsWith(powerSet.Name))
                                             {
                                                 <div class="col mt-2">
-                                                    <div class=" p-1 rounded border border-dark-subtle border-3" style="background-image: url('/images/pslot2.png'); background-size: 100% 90%; background-repeat: no-repeat;">
+                                                    <div class=" p-1 rounded border border-dark-subtle border-3" style="background-image: url('/images/pSlot2.png'); background-size: 100% 90%; background-repeat: no-repeat;">
                                                         <div class="text-center mb-1">
                                                             <h2 class="h5">(@powerEntry.Level) - @powerEntry.PowerNameDisplay</h2>
                                                         </div>
@@ -346,7 +346,7 @@
                                     @foreach (var power in powerGroup)
                                     {
                                         <div class="col mt-2">
-                                            <div class=" p-1 rounded border border-dark-subtle border-3" style="background-image: url('/images/pslot2.png'); background-size: 100% 90%; background-repeat: no-repeat;">
+                                            <div class=" p-1 rounded border border-dark-subtle border-3" style="background-image: url('/images/pSlot2.png'); background-size: 100% 90%; background-repeat: no-repeat;">
                                                 <div class="text-center mb-1">
                                                     <h2 class="h5">(@power.Level) - @power.PowerNameDisplay</h2>
                                                 </div>

@@ -10,7 +10,7 @@ namespace CBD.Services
     {
 
         private readonly string[] suffixes = { "Bytes", "KB", "MB", "GB", "TB", "PB" };
-        private readonly string defaultImage = "Iamge/Default.png";
+        private readonly string defaultImage = "iamges/Default.png";
         private readonly IWebHostEnvironment _env;
 
         public ImageService(IWebHostEnvironment env)
