@@ -3,29 +3,41 @@
 @using Microsoft.AspNetCore.Hosting
 @using CBD.Enums
 @using CBD.Models
-@model Build
+@using CBD.Models.ViewModels
 
 @inject IWebHostEnvironment WebHostEnvironment
 
 @inject IImageService imageService
-
+@model BuildDetailViewModel
 
 <div class="container mt-4">
     <div class="row">
         <div class="col">
             <h3>
-                Name: @Model.Name
+                Name: @Model.Build.Name
             </h3>
-            <h4>Class: <img src="~/images/archetypes/@($"{Model.Class}.png")" /> @Model.ClassDisplay</h4>
+            <h4>Class: <img src="~/images/archetypes/@($"{Model.Build.Class}.png")" /> @Model.Build.ClassDisplay</h4>
 
-            <p>Comment: @Model.Comment</p>
+            <p>Comment: @Model.Build.Comment</p>
         </div>
         <div class="col ">
+            <article>
+                <hr />
+                <h3 class="text-center font-weight-bold">Tags</h3>
+                <div class="col text-center">
+                    @foreach (var tag in Model.Build.Tags.ToList())
+                    {
+                        <a asp-action="TagIndex" asp-route-tag="@tag.Text.ToLower()" class="mb-1 btn btn-sm btn-warning btn-outline-dark">#@tag.Text</a>
+                    }
+                </div>
+                <hr />
+            </article>
+
             <!-- ... (other HTML content) ... -->
 
-            <a type="button" class="btn btn-primary text-center" href="data:application/json;base64,@Convert.ToBase64String(Encoding.UTF8.GetBytes(Model.RawJson))" download="@($"{Model.Class}_{Model.Name.Replace(" ", "_")}.mbd")">Download Build</a>
+            <a type="button" class="btn btn-primary text-center" href="data:application/json;base64,@Convert.ToBase64String(Encoding.UTF8.GetBytes(Model.Build.RawJson))" download="@($"{Model.Build.Class}_{Model.Build.Name.Replace(" ", "_")}.mbd")">Download Build</a>
 
-            <p>Mids Build Version: @Model.BuiltWith.Version</p>
+            <p>Mids Build Version: @Model.Build.BuiltWith.Version</p>
 
             <!-- Toggle buttons for subscripts and superscripts -->
             <button id="toggleSuperscripts" class="btn btn-primary">Enhancement Levels On/Off</button>
@@ -55,7 +67,7 @@
 
         <div class="col col-md-4 border border-dark-subtle border-3">
             <h2 class="card-title" id="primary-powers">Primary Powers</h2>
-            @foreach (var powerSet in Model.PowerSets.Where(ps => ps.Type == CBD.Enums.PowerSetType.Primary && !string.IsNullOrEmpty(ps.Name)))
+            @foreach (var powerSet in Model.Build.PowerSets.Where(ps => ps.Type == CBD.Enums.PowerSetType.Primary && !string.IsNullOrEmpty(ps.Name)))
             {
                 <div class="card my-2 text-light">
                     <div class="card-subtitle">
@@ -66,7 +78,7 @@
 
                     <div id="powerSet@powerSet">
                         <div class="card-text">
-                            @foreach (var powerEntry in Model.PowerEntries.Where(pe => pe.PowerSetType == CBD.Enums.PowerSetType.Primary && !string.IsNullOrEmpty(pe.PowerName)))
+                            @foreach (var powerEntry in Model.Build.PowerEntries.Where(pe => pe.PowerSetType == CBD.Enums.PowerSetType.Primary && !string.IsNullOrEmpty(pe.PowerName)))
                             {
                                 <div class="col mt-2">
                                     <div class=" p-1 rounded border border-dark-subtle border-3" style="background-image: url('/images/pSlot2.png'); background-size: 100% 90%; background-repeat: no-repeat;">
@@ -125,7 +137,7 @@
 
         <div class="col col-md-4 border border-dark-subtle border-3">
             <h2 class="card-title" id="secondary-powers">Secondary Powers</h2>
-            @foreach (var powerSet in Model.PowerSets.Where(ps => ps.Type == CBD.Enums.PowerSetType.Secondary && !string.IsNullOrEmpty(ps.Name)))
+            @foreach (var powerSet in Model.Build.PowerSets.Where(ps => ps.Type == CBD.Enums.PowerSetType.Secondary && !string.IsNullOrEmpty(ps.Name)))
             {
                 <div class="card my-2 text-light">
                     <div class="card-subtitle">
@@ -136,7 +148,7 @@
 
                     <div id="powerSet@powerSet">
                         <div class="card-text">
-                            @foreach (var powerEntry in Model.PowerEntries.Where(pe => pe.PowerSetType == CBD.Enums.PowerSetType.Secondary && !string.IsNullOrEmpty(pe.PowerName)))
+                            @foreach (var powerEntry in Model.Build.PowerEntries.Where(pe => pe.PowerSetType == CBD.Enums.PowerSetType.Secondary && !string.IsNullOrEmpty(pe.PowerName)))
                             {
                                 <div class="col mt-2">
                                     <div class=" p-1 rounded border border-dark-subtle border-3" style="background-image: url('/images/pSlot2.png'); background-size: 100% 90%; background-repeat: no-repeat;">
@@ -196,7 +208,7 @@
         <div class="col col-md-4 border border-dark-subtle border-3">
 
             <h2 class="card-title" id="epic-powers">Epic Powers</h2>
-                     @foreach (var powerSet in Model.PowerSets.Where(ps => ps.Type == CBD.Enums.PowerSetType.Epic && !string.IsNullOrEmpty(ps.Name)))
+                     @foreach (var powerSet in Model.Build.PowerSets.Where(ps => ps.Type == CBD.Enums.PowerSetType.Epic && !string.IsNullOrEmpty(ps.Name)))
                     {
                         <div class="card my-2 text-light">
                             <div class="card-subtitle">
@@ -207,7 +219,7 @@
 
                             <div id="powerSet@powerSet">
                         <div class="card-text">
-                                    @foreach (var powerEntry in Model.PowerEntries.Where(pe => pe.PowerSetType == CBD.Enums.PowerSetType.Epic && !string.IsNullOrEmpty(pe.PowerName)))
+                                    @foreach (var powerEntry in Model.Build.PowerEntries.Where(pe => pe.PowerSetType == CBD.Enums.PowerSetType.Epic && !string.IsNullOrEmpty(pe.PowerName)))
                                     {
                                         <div class="col mt-2">
 
@@ -261,7 +273,7 @@
 
             <h2 class="card-title" id="pool-powers">Pool Powers</h2>
  
-                    @foreach (var powerSetGroup in Model.PowerSets.Where(ps => ps.Type == CBD.Enums.PowerSetType.Pool && !string.IsNullOrEmpty(ps.Name))
+                    @foreach (var powerSetGroup in Model.Build.PowerSets.Where(ps => ps.Type == CBD.Enums.PowerSetType.Pool && !string.IsNullOrEmpty(ps.Name))
                     .GroupBy(ps => ps.Name.Split('.')[1]))
                     {
                         <div class="card my-2 text-light">
@@ -275,7 +287,7 @@
                                 <div class="card-text">
                                     @foreach (var powerSet in powerSetGroup)
                                     {
-                                        foreach (var powerEntry in Model.PowerEntries.Where(pe => pe.PowerSetType == CBD.Enums.PowerSetType.Pool && !string.IsNullOrEmpty(pe.PowerName)))
+                                        foreach (var powerEntry in Model.Build.PowerEntries.Where(pe => pe.PowerSetType == CBD.Enums.PowerSetType.Pool && !string.IsNullOrEmpty(pe.PowerName)))
                                         {
                                             if (powerEntry.PowerName.StartsWith(powerSet.Name))
                                             {
@@ -331,7 +343,7 @@
 
             <h2 class="card-title" id="inherent-powers">Inherent Powers</h2>
 
-                    @foreach (var powerGroup in Model.PowerEntries.Where(pe => pe.PowerSetType == CBD.Enums.PowerSetType.Inherent && !string.IsNullOrEmpty(pe.PowerName))
+                    @foreach (var powerGroup in Model.Build.PowerEntries.Where(pe => pe.PowerSetType == CBD.Enums.PowerSetType.Inherent && !string.IsNullOrEmpty(pe.PowerName))
                     .GroupBy(pe => pe.PowerName.Split('.')[1]))
                     {
                         <div class="card my-2 text-light">

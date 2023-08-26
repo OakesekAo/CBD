@@ -1,9 +1,11 @@
 ﻿using CBD.Data;
 using CBD.Enums;
 using CBD.Models;
+using CBD.Models.ViewModels;
 using CBD.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
@@ -20,13 +22,15 @@ namespace CBD.Controllers
         private readonly ApplicationDbContext _context;
         private readonly IImageService _imageService;
         private readonly UserManager<CBDUser> _userManager;
+        private readonly IEmailSender _emailSender;
 
-        public HomeController(ILogger<HomeController> logger, ApplicationDbContext context, IImageService imageService, UserManager<CBDUser> userManager)
+        public HomeController(ILogger<HomeController> logger, ApplicationDbContext context, IImageService imageService, UserManager<CBDUser> userManager, IEmailSender emailSender)
         {
             _logger = logger;
             _context = context;
             _imageService = imageService;
             _userManager = userManager;
+            _emailSender = emailSender;
         }
 
         public IActionResult Index()
@@ -38,6 +42,19 @@ namespace CBD.Controllers
         {
             return View();
         }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Contact(ContactMe model)
+        {
+            //this is where we will be using the email sender...
+            model.Body = $"{model.Body}";
+            //await _emailSender.SendEmailAsync(model.Email, model.Name, model.Subject, model.Body);
+            return RedirectToAction("Index");
+
+        }
+
 
         [Authorize]
         public IActionResult ImportJSON()

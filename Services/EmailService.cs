@@ -16,6 +16,31 @@ namespace CBD.Services
             _mailSettings = mailSettings.Value;
         }
 
+
+        public async Task SendContactEmailAsync(string emailFrom, string name, string subject, string htmlMessage)
+        {
+            var email = new MimeMessage();
+            email.Sender = MailboxAddress.Parse(_mailSettings.Email);
+            email.To.Add(MailboxAddress.Parse(_mailSettings.Email));
+            email.Subject = subject;
+
+            var builder = new BodyBuilder();
+            builder.HtmlBody = $"<br>{name}<br> has sent you and email and can be reached at: <b>{emailFrom}</b><br/><br/>{htmlMessage}";
+
+            email.Body = builder.ToMessageBody();
+
+            //setup, connect, and auth new smtp client
+            using var smtp = new SmtpClient();
+            smtp.Connect(_mailSettings.EmailHost, _mailSettings.EmailPort, SecureSocketOptions.StartTls);
+            smtp.Authenticate(_mailSettings.Email, _mailSettings.EmailPassword);
+
+            //sends email
+            await smtp.SendAsync(email);
+
+
+            //disconnect from the smtp server
+            smtp.Disconnect(true);
+        }
         public async Task SendEmailAsync(string email, string subject, string htmlMessage)
         {
             //handles local (secrets) and production email settings

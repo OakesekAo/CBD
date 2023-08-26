@@ -1,18 +1,65 @@
-﻿@{
-    ViewBag.Title = "Import Build JSON Data";
-}
+﻿@using CBD.Enums;
+@model CBD.Models.Build
 
-<h2>Import JSON Data</h2>
-@using (Html.BeginForm("BuildImport", "Builds", FormMethod.Post, new { enctype = "multipart/form-data" }))
-{
-    <div>
-        <label for="jsonFile">Select a JSON File:</label>
-        <input type="file" id="jsonFile" name="jsonFile" accept=".json, .mbd" />
-    </div>
-    <br />
-    <div>
-        <textarea name="jsonData" rows="10" cols="80" placeholder="Or paste JSON data here"></textarea>
-    </div>
-    <br />
-    <input type="submit" value="Import and Display" />
+@{
+    ViewData["Title"] = "Import Build";
+}
+<div class="container">
+    <h2>Import JSON Data</h2>
+    <form asp-action="BuildImport" enctype="multipart/form-data">
+        <div>
+            <label for="jsonFile">Select a JSON File:</label>
+            <input type="file" id="jsonFile" name="jsonFile" accept=".json, .mbd" />
+        </div>
+        <br />
+
+        <div class="form-group">
+            <div class="row">
+                <div class="col">
+                    <label class="control-label">Manage Tags</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <div class="row mb-2">
+                        <div class="col">
+                            <input type="text" class="form-control" id="TagEntry" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <button onclick="AddTag()" name="Add" type="button" class="btn btn-dark btn-sm w-100">Add</button>
+                        </div>
+                        <div class="col">
+
+                            <button onclick="DeleteTag()" name="Delete" type="button" class="btn btn-dark btn-sm w-100">Delete</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <select class="w-100" name="tagValues" id="TagList" multiple></select>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="ReadyStatus" class="control-label"></label>
+            <select asp-for="ReadyStatus" asp-items="@Html.GetEnumSelectList<ReadyStatus>()" class="form-control"></select>
+            <span asp-validation-for="ReadyStatus" class="text-danger"></span>
+        </div>
+
+
+
+        <div class="form-group">
+            <button type="submit" value="Import and Display" class="btn btn-dark btn-sm w-100">Import</button>
+        </div>
+    </form>
+
+
+</div>
+
+
+@section Scripts {
+
+    <script src="~/js/custom.js"></script>
 }
