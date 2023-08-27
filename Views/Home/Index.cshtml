@@ -3,6 +3,30 @@
 }
 
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <section class="features">
+        <div class="feature p-2">
+                <span class="bi bi-upload" style="font-size: 2rem;"></span>
+            <h2>Upload Your Build</h2>
+            <p>Contribute to the Heroic Community by sharing your builds. Our app currently supports the newest MIDS file format.</p>
+        <a asp-controller="Builds" asp-action="ImportJSON" class="btn btn-primary">Upload Your Build</a>
+        </div>
+        <div class="feature p-2">
+            <span class="bi bi-search" style="font-size: 2rem;"></span>
+            <h2>Find Builds</h2>
+            <p>Explore a vast collection of hero and villain builds created by fellow enthusiasts. Find the perfect build to suit your playstyle.</p>
+        <a asp-controller="Builds" asp-action="Index" class="btn btn-primary">Explore Builds</a>
+
+        </div>
+        <div class="feature p-2">
+            <span class="bi bi-tag" style="font-size: 2rem;"></span>
+            <h2>Add Tags</h2>
+            <p>Enhance searchability by adding tags to the builds you upload. Tags make it easier for others to discover your creations.</p>
+        </div>
+    </section>
+
+    <section class="upload p-2">
+        <h2>Get Started</h2>
+        <p>Join the City of Heroes Builds Database community today. Share, explore, and elevate your gameplay.</p>
+        <a class="btn btn-primary" asp-area="Identity" asp-page="/Account/Register">Register</a>
+    </section>
 </div>

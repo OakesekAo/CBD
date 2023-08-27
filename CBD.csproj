@@ -8,6 +8,13 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Compile Remove="Views\Comments\**" />
+	  <Content Remove="Views\Comments\**" />
+	  <EmbeddedResource Remove="Views\Comments\**" />
+	  <None Remove="Views\Comments\**" />
+	</ItemGroup>
+
+	<ItemGroup>
 	  <Compile Remove="Models\BuildOld.cs" />
 	  <Compile Remove="Services\DataService.cs" />
 	</ItemGroup>

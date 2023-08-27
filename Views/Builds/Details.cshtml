@@ -35,8 +35,10 @@
 
             <!-- ... (other HTML content) ... -->
 
-            <a type="button" class="btn btn-primary text-center" href="data:application/json;base64,@Convert.ToBase64String(Encoding.UTF8.GetBytes(Model.Build.RawJson))" download="@($"{Model.Build.Class}_{Model.Build.Name.Replace(" ", "_")}.mbd")">Download Build</a>
+            <a type="button" class="btn btn-primary text-center" href="#" onclick="confirmDownload()">Download Build</a>
 
+            @*<a type="button" class="btn btn-primary text-center" href="data:application/json;base64,@Convert.ToBase64String(Encoding.UTF8.GetBytes(Model.Build.RawJson))" download="@($"{Model.Build.Class}_{Model.Build.Name.Replace(" ", "_")}.mbd")">Download Build</a>
+*@
             <p>Mids Build Version: @Model.Build.BuiltWith.Version</p>
 
             <!-- Toggle buttons for subscripts and superscripts -->
@@ -416,6 +418,18 @@
 
 @section Scripts {
     <script>
+
+        function confirmDownload() {
+            if (confirm("Do you want to download this build?")) {
+                // User confirmed, initiate the download
+                var downloadLink = document.createElement("a");
+                downloadLink.href = "data:application/json;base64,@Convert.ToBase64String(Encoding.UTF8.GetBytes(Model.Build.RawJson))";
+                downloadLink.download = "@($"{Model.Build.Class}_{Model.Build.Name.Replace(" ", "_")}.mbd")";
+                downloadLink.click();
+            }
+        }
+
+
         $(document).ready(function () {
             $("#toggleSubscripts").click(function () {
                 $(".subscript").toggle();

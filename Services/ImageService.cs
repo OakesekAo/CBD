@@ -70,7 +70,7 @@ namespace CBD.Services
             if (string.IsNullOrWhiteSpace(enhancementName))
             {
                 // Set a default icon and return it
-                return "/images/unknown.png";
+                return "/images/icon/boosts/sets/unknown.png";
             }
             else
             {
@@ -96,7 +96,7 @@ namespace CBD.Services
                 Console.WriteLine($"Error reading JSON file: {ex.Message}");
                 // Return a default icon URL or handle the case when JSON data is missing or invalid
                 ///This needs to handle reg IOs and HOs
-                return "/images/unknown.png";
+                return "/images/icon/boosts/sets/unknown.png";
             }
 
             // Parse the JSON using JObject from Newtonsoft.Json
