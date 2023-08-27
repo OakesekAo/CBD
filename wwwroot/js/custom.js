@@ -1,5 +1,8 @@
 ﻿let index = 0;
 
+
+
+
 function AddTag() {
     //Get a ref tot he TagEntry Input element
     var tagEntry = document.getElementById("TagEntry");
@@ -88,6 +91,22 @@ function search(str) {
     }
 
 }
+
+function validateFileSize(input) {
+    var maxSizeKB = 100; // Maximum file size in KB (100KB in this case)
+    var fileSize = input.files[0].size / 1024; // Get file size in KB
+
+    var fileSizeError = document.getElementById("fileSizeError");
+
+    if (fileSize > maxSizeKB) {
+        // Display an error message and clear the file input
+        fileSizeError.innerText = "File size exceeds the maximum limit of 100KB.";
+        input.value = null; // Clear the file input
+    } else {
+        fileSizeError.innerText = ""; // Clear any previous error message
+    }
+}
+
 
 const swalWithDarkButton = Swal.mixin({
     customClass: {

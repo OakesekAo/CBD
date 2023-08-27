@@ -43,6 +43,12 @@ namespace CBD.Controllers
             return View();
         }
 
+        [HttpGet]
+        public IActionResult Contact()
+        {
+            return View();
+        }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]

@@ -151,6 +151,11 @@ namespace CBD.Controllers
         [HttpPost]
         public async Task<IActionResult> BuildImport([Bind("ReadyStatus")] IFormFile jsonFile, string jsonData, List<string> tagValues)
         {
+            if (jsonFile is null)
+            {
+
+                return RedirectToAction(nameof(ImportJSON));
+            }
 
             CBDUser cbdUser = await _userManager.GetUserAsync(User);
             //var cbdUserId = cbdUser.Id;
@@ -214,7 +219,7 @@ namespace CBD.Controllers
                 return NotFound();
             }
 
-            var build = await _context.Build.FindAsync(id);
+            var build = await _context.Build.Include(p => p.Tags).FirstOrDefaultAsync(p => p.Id == id);
             if (build == null)
             {
                 return NotFound();
@@ -242,8 +247,9 @@ namespace CBD.Controllers
             }
             try
             {
-                var newBuild = await _context.Build
+                var newBuild = await _context.Build                    
                                                 .Include(b => b.BuiltWith)         //  load BuiltWith
+                                                .Include(b => b.Tags)
                                                 .Include(b => b.CBDUser)           //  load CBDUser
                                                 .Include(b => b.PowerEntries)      //  load PowerEntries
                                                     .ThenInclude(pe => pe.SlotEntries) //  load SlotEntries within PowerEntries

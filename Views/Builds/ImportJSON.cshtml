@@ -5,11 +5,12 @@
     ViewData["Title"] = "Import Build";
 }
 <div class="container">
-    <h2>Import JSON Data</h2>
+    <h2>Import Build</h2>
     <form asp-action="BuildImport" enctype="multipart/form-data">
         <div>
-            <label for="jsonFile">Select a JSON File:</label>
-            <input type="file" id="jsonFile" name="jsonFile" accept=".json, .mbd" />
+            <label for="jsonFile">Select a MDB File character build:</label><br />
+            <input type="file" id="jsonFile" name="jsonFile" accept=".json, .mbd, .bin" onchange="validateFileSize(this)" />
+
         </div>
         <br />
 
@@ -23,7 +24,7 @@
                 <div class="col">
                     <div class="row mb-2">
                         <div class="col">
-                            <input type="text" class="form-control" id="TagEntry" />
+                            <input type="text" class="form-control" id="TagEntry" placeholder="Put searchable hash tags here.."/>
                         </div>
                     </div>
                     <div class="row">
@@ -43,7 +44,7 @@
         </div>
 
         <div class="form-group">
-            <label asp-for="ReadyStatus" class="control-label"></label>
+            <label asp-for="ReadyStatus" class="control-label">Select status of the character build</label>
             <select asp-for="ReadyStatus" asp-items="@Html.GetEnumSelectList<ReadyStatus>()" class="form-control"></select>
             <span asp-validation-for="ReadyStatus" class="text-danger"></span>
         </div>
@@ -61,5 +62,7 @@
 
 @section Scripts {
 
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="~/js/custom.js"></script>
+</script>
 }
