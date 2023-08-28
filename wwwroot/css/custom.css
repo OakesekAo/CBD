@@ -3,6 +3,11 @@
     display: inline-block;
 }
 
+.row-link {
+    cursor: pointer;
+}
+
+
 #navbarResponsive > ul:nth-child(2) > li:nth-child(2) > form > button {
     line-height: 1.5;
     font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;

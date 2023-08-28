@@ -47,7 +47,7 @@ namespace CBD.Controllers
         public async Task<IActionResult> Index(int? page, string tag)
         {
             var pageNumber = page ?? 1;
-            var pageSize = 12;
+            var pageSize = 10;
 
             IQueryable<Build> buildsQuery = _context.Build;
 

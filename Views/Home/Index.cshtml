@@ -2,10 +2,16 @@
     ViewData["Title"] = "Home Page";
 }
 
+
 <div class="text-center">
+    <div class="feature p-2">
+        <h1>Welcome to City of Builds Database</h1>
+        <p>Here you can search for different builds and share your own build as well. You can view a mobile friendly snapshot of the build or download it and view it in Mids or Talon character builders</p>
+    </div>
+
     <section class="features">
         <div class="feature p-2">
-                <span class="bi bi-upload" style="font-size: 2rem;"></span>
+            <i class="bi bi-arrow-bar-up" style="font-size: 2rem;"></i>
             <h2>Upload Your Build</h2>
             <p>Contribute to the Heroic Community by sharing your builds. Our app currently supports the newest MIDS file format.</p>
         <a asp-controller="Builds" asp-action="ImportJSON" class="btn btn-primary">Upload Your Build</a>

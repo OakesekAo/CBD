@@ -70,7 +70,7 @@ namespace CBD.Services
             if (string.IsNullOrWhiteSpace(enhancementName))
             {
                 // Set a default icon and return it
-                return "/images/icon/boosts/sets/unknown.png";
+                return "/images/icon/boosts/sets/none.png";
             }
             else
             {
