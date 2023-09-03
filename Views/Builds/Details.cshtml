@@ -38,7 +38,7 @@
             <a type="button" class="btn btn-primary text-center" href="#" onclick="confirmDownload()">Download Build</a>
 
             @*<a type="button" class="btn btn-primary text-center" href="data:application/json;base64,@Convert.ToBase64String(Encoding.UTF8.GetBytes(Model.Build.RawJson))" download="@($"{Model.Build.Class}_{Model.Build.Name.Replace(" ", "_")}.mbd")">Download Build</a>
-*@
+            *@
             <p>Mids Build Version: @Model.Build.BuiltWith.Version</p>
 
             <!-- Toggle buttons for subscripts and superscripts -->
@@ -210,21 +210,90 @@
         <div class="col col-md-4 border border-dark-subtle border-3">
 
             <h2 class="card-title" id="epic-powers">Epic Powers</h2>
-                     @foreach (var powerSet in Model.Build.PowerSets.Where(ps => ps.Type == CBD.Enums.PowerSetType.Epic && !string.IsNullOrEmpty(ps.Name)))
-                    {
-                        <div class="card my-2 text-light">
-                            <div class="card-subtitle">
-                                <h4 class="mb-0 text-dark">
-                                    @powerSet.NameDisplay
-                                </h4>
-                            </div>
+            @foreach (var powerSet in Model.Build.PowerSets.Where(ps => ps.Type == CBD.Enums.PowerSetType.Epic && !string.IsNullOrEmpty(ps.Name)))
+            {
+                <div class="card my-2 text-light">
+                    <div class="card-subtitle">
+                        <h4 class="mb-0 text-dark">
+                            @powerSet.NameDisplay
+                        </h4>
+                    </div>
 
-                            <div id="powerSet@powerSet">
+                    <div id="powerSet@powerSet">
                         <div class="card-text">
-                                    @foreach (var powerEntry in Model.Build.PowerEntries.Where(pe => pe.PowerSetType == CBD.Enums.PowerSetType.Epic && !string.IsNullOrEmpty(pe.PowerName)))
+                            @foreach (var powerEntry in Model.Build.PowerEntries.Where(pe => pe.PowerSetType == CBD.Enums.PowerSetType.Epic && !string.IsNullOrEmpty(pe.PowerName)))
+                            {
+                                <div class="col mt-2">
+
+                                    <div class=" p-1 rounded border border-dark-subtle border-3" style="background-image: url('/images/pSlot2.png'); background-size: 100% 90%; background-repeat: no-repeat;">
+                                        <div class="text-center mb-1">
+                                            <h2 class="h5">(@powerEntry.Level) - @powerEntry.PowerNameDisplay</h2>
+                                        </div>
+                                        <div class="d-flex justify-content-left">
+                                            @foreach (var slotEntry in powerEntry.SlotEntries)
+                                            {
+                                                <div class="slot-entry-container">
+                                                    <div class="rounded-circle"
+                                             data-bs-toggle="popover"
+                                             data-bs-placement="bottom"
+                                             data-bs-trigger="hover"
+                                             data-bs-content="@slotEntry.Enhancement?.EnhancementName"
+                                             style="width: 40px; height: 40px;">
+                                                        @{
+                                                            var enhancementName = slotEntry.Enhancement?.EnhancementName;
+                                                            var sanitizedEnhancementName = enhancementName?.Split(':')[0].Trim().Replace("'", "");
+                                                            var imageUrl = "";
+                                                            if (!string.IsNullOrEmpty(sanitizedEnhancementName))
+                                                            {
+                                                                sanitizedEnhancementName = sanitizedEnhancementName.Replace(" ", "_");
+
+                                                                imageUrl = await imageService.EnhancementImageLookupAsync(sanitizedEnhancementName);
+                                                            }
+                                                        }
+
+                                                        @if (!string.IsNullOrEmpty(imageUrl))
+                                                        {
+                                                            <img src="@imageUrl" alt="@slotEntry.Enhancement?.EnhancementName" style="width: 100%; height: 100%;" />
+                                                        }
+                                                    </div>
+                                                    <div class="subscript">@slotEntry.Level</div>
+                                                    @if (slotEntry.Enhancement?.IoLevel != null)
+                                                    {
+                                                        <sup class="superscript">@((slotEntry.Enhancement?.IoLevel + 1))</sup>
+                                                    }
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+
+
+            <h2 class="card-title" id="pool-powers">Pool Powers</h2>
+
+            @foreach (var powerSetGroup in Model.Build.PowerSets.Where(ps => ps.Type == CBD.Enums.PowerSetType.Pool && !string.IsNullOrEmpty(ps.Name))
+            .GroupBy(ps => ps.Name.Split('.')[1]))
+            {
+                <div class="card my-2 text-light">
+                    <div class="card-subtitle">
+                        <h4 class="mb-0 text-dark">
+                            @powerSetGroup.Key
+                        </h4>
+                    </div>
+
+                    <div id="powerSetGroup@powerSetGroup.Key">
+                        <div class="card-text">
+                            @foreach (var powerSet in powerSetGroup)
+                            {
+                                foreach (var powerEntry in Model.Build.PowerEntries.Where(pe => pe.PowerSetType == CBD.Enums.PowerSetType.Pool && !string.IsNullOrEmpty(pe.PowerName)))
+                                {
+                                    if (powerEntry.PowerName.StartsWith(powerSet.Name))
                                     {
                                         <div class="col mt-2">
-
                                             <div class=" p-1 rounded border border-dark-subtle border-3" style="background-image: url('/images/pSlot2.png'); background-size: 100% 90%; background-repeat: no-repeat;">
                                                 <div class="text-center mb-1">
                                                     <h2 class="h5">(@powerEntry.Level) - @powerEntry.PowerNameDisplay</h2>
@@ -234,147 +303,11 @@
                                                     {
                                                         <div class="slot-entry-container">
                                                             <div class="rounded-circle"
-                                                     data-bs-toggle="popover"
-                                                     data-bs-placement="bottom"
-                                                     data-bs-trigger="hover"
-                                                     data-bs-content="@slotEntry.Enhancement?.EnhancementName"
-                                                     style="width: 40px; height: 40px;">
-                                                                @{
-                                                                    var enhancementName = slotEntry.Enhancement?.EnhancementName;
-                                                                    var sanitizedEnhancementName = enhancementName?.Split(':')[0].Trim().Replace("'", "");
-                                                                    var imageUrl = "";
-                                                                    if (!string.IsNullOrEmpty(sanitizedEnhancementName))
-                                                                    {
-                                                                        sanitizedEnhancementName = sanitizedEnhancementName.Replace(" ", "_");
-
-                                                                        imageUrl = await imageService.EnhancementImageLookupAsync(sanitizedEnhancementName);
-                                                                    }
-                                                                }
-
-                                                                @if (!string.IsNullOrEmpty(imageUrl))
-                                                                {
-                                                                    <img src="@imageUrl" alt="@slotEntry.Enhancement?.EnhancementName" style="width: 100%; height: 100%;" />
-                                                                }
-                                                            </div>
-                                                            <div class="subscript">@slotEntry.Level</div>
-                                                            @if (slotEntry.Enhancement?.IoLevel != null)
-                                                            {
-                                                                <sup class="superscript">@((slotEntry.Enhancement?.IoLevel + 1))</sup>
-                                                            }
-                                                        </div>
-                                                    }
-                                                </div>
-                                            </div>
-                                        </div>
-                                    }
-                                </div>
-                            </div>
-                        </div>
-                    }
-  
-
-            <h2 class="card-title" id="pool-powers">Pool Powers</h2>
- 
-                    @foreach (var powerSetGroup in Model.Build.PowerSets.Where(ps => ps.Type == CBD.Enums.PowerSetType.Pool && !string.IsNullOrEmpty(ps.Name))
-                    .GroupBy(ps => ps.Name.Split('.')[1]))
-                    {
-                        <div class="card my-2 text-light">
-                            <div class="card-subtitle">
-                                <h4 class="mb-0 text-dark">
-                                    @powerSetGroup.Key
-                                </h4>
-                            </div>
-
-                            <div id="powerSetGroup@powerSetGroup.Key">
-                                <div class="card-text">
-                                    @foreach (var powerSet in powerSetGroup)
-                                    {
-                                        foreach (var powerEntry in Model.Build.PowerEntries.Where(pe => pe.PowerSetType == CBD.Enums.PowerSetType.Pool && !string.IsNullOrEmpty(pe.PowerName)))
-                                        {
-                                            if (powerEntry.PowerName.StartsWith(powerSet.Name))
-                                            {
-                                                <div class="col mt-2">
-                                                    <div class=" p-1 rounded border border-dark-subtle border-3" style="background-image: url('/images/pSlot2.png'); background-size: 100% 90%; background-repeat: no-repeat;">
-                                                        <div class="text-center mb-1">
-                                                            <h2 class="h5">(@powerEntry.Level) - @powerEntry.PowerNameDisplay</h2>
-                                                        </div>
-                                                        <div class="d-flex justify-content-left">
-                                                            @foreach (var slotEntry in powerEntry.SlotEntries)
-                                                            {
-                                                                <div class="slot-entry-container">
-                                                                    <div class="rounded-circle"
-                                                     data-bs-toggle="popover"
-                                                     data-bs-placement="bottom"
-                                                     data-bs-trigger="hover"
-                                                     data-bs-content="@slotEntry.Enhancement?.EnhancementName"
-                                                     style="width: 40px; height: 40px;">
-                                                                        @{
-                                                                            var enhancementName = slotEntry.Enhancement?.EnhancementName;
-                                                                            var sanitizedEnhancementName = enhancementName?.Split(':')[0].Trim().Replace("'", "");
-                                                                            if (!string.IsNullOrEmpty(sanitizedEnhancementName))
-                                                                            {
-                                                                                sanitizedEnhancementName = sanitizedEnhancementName.Replace(" ", "_");
-                                                                            }
-
-                                                                            var imageUrl = await imageService.EnhancementImageLookupAsync(sanitizedEnhancementName);
-                                                                        }
-
-                                                                        @if (!string.IsNullOrEmpty(imageUrl))
-                                                                        {
-                                                                            <img src="@imageUrl" alt="@slotEntry.Enhancement?.EnhancementName" style="width: 100%; height: 100%;" />
-                                                                        }
-                                                                    </div>
-                                                                    <div class="subscript">@slotEntry.Level</div>
-                                                                    @if (slotEntry.Enhancement?.IoLevel != null)
-                                                                    {
-                                                                        <sup class="superscript">@((slotEntry.Enhancement?.IoLevel + 1))</sup>
-                                                                    }
-                                                                </div>
-                                                            }
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            }
-                                        }
-                                    }
-                                </div>
-                            </div>
-                        </div>
-                    }
-
-
-            <h2 class="card-title" id="inherent-powers">Inherent Powers</h2>
-
-                    @foreach (var powerGroup in Model.Build.PowerEntries.Where(pe => pe.PowerSetType == CBD.Enums.PowerSetType.Inherent && !string.IsNullOrEmpty(pe.PowerName))
-                    .GroupBy(pe => pe.PowerName.Split('.')[1]))
-                    {
-                        <div class="card my-2 text-light">
-                            <div class="card-subtitle">
-                                <h4 class="mb-0 text-dark">
-                                    @powerGroup.Key
-                                </h4>
-                            </div>
-
-                            <div id="powerGroup@powerGroup.Key">
-                                <div class="card-text">
-                                    @foreach (var power in powerGroup)
-                                    {
-                                        <div class="col mt-2">
-                                            <div class=" p-1 rounded border border-dark-subtle border-3" style="background-image: url('/images/pSlot2.png'); background-size: 100% 90%; background-repeat: no-repeat;">
-                                                <div class="text-center mb-1">
-                                                    <h2 class="h5">(@power.Level) - @power.PowerNameDisplay</h2>
-                                                </div>
-                                                <div class="d-flex justify-content-left">
-                                                    @foreach (var slotEntry in power.SlotEntries)
-                                                    {
-
-                                                        <div class="slot-entry-container">
-                                                            <div class="rounded-circle"
-                                                     data-bs-toggle="popover"
-                                                     data-bs-placement="bottom"
-                                                     data-bs-trigger="hover"
-                                                     data-bs-content="@slotEntry.Enhancement?.EnhancementName"
-                                                     style="width: 40px; height: 40px;">
+                                             data-bs-toggle="popover"
+                                             data-bs-placement="bottom"
+                                             data-bs-trigger="hover"
+                                             data-bs-content="@slotEntry.Enhancement?.EnhancementName"
+                                             style="width: 40px; height: 40px;">
                                                                 @{
                                                                     var enhancementName = slotEntry.Enhancement?.EnhancementName;
                                                                     var sanitizedEnhancementName = enhancementName?.Split(':')[0].Trim().Replace("'", "");
@@ -392,7 +325,6 @@
                                                                 }
                                                             </div>
                                                             <div class="subscript">@slotEntry.Level</div>
-
                                                             @if (slotEntry.Enhancement?.IoLevel != null)
                                                             {
                                                                 <sup class="superscript">@((slotEntry.Enhancement?.IoLevel + 1))</sup>
@@ -403,10 +335,79 @@
                                             </div>
                                         </div>
                                     }
-                                </div>
-                            </div>
+                                }
+                            }
                         </div>
-                    }
+                    </div>
+                </div>
+            }
+
+
+            <h2 class="card-title" id="inherent-powers">Inherent Powers</h2>
+            <button class="btn btn-primary mb-2" id="toggleInherentPowers">Toggle Inherent Powers</button>
+
+            @foreach (var (powerGroup, index) in Model.Build.PowerEntries.Where(pe => pe.PowerSetType == CBD.Enums.PowerSetType.Inherent && !string.IsNullOrEmpty(pe.PowerName))
+            .GroupBy(pe => pe.PowerName.Split('.')[1]).Select((group, index) => (group, index)))
+            {
+                <div class="card my-2 text-light">
+                    <div class="card-subtitle">
+                        <h4 class="mb-0 text-dark">
+                            @powerGroup.Key
+                        </h4>
+                    </div>
+
+                    <div id="powerGroup@(index)">
+                        <div class="card-text">
+                            @foreach (var power in powerGroup)
+                            {
+                                <div class="col mt-2">
+                                    <div class=" p-1 rounded border border-dark-subtle border-3" style="background-image: url('/images/pSlot2.png'); background-size: 100% 90%; background-repeat: no-repeat;">
+                                        <div class="text-center mb-1">
+                                            <h2 class="h5">(@power.Level) - @power.PowerNameDisplay</h2>
+                                        </div>
+                                        <div class="d-flex justify-content-left">
+                                            @foreach (var slotEntry in power.SlotEntries)
+                                            {
+
+                                                <div class="slot-entry-container">
+                                                    <div class="rounded-circle"
+                                             data-bs-toggle="popover"
+                                             data-bs-placement="bottom"
+                                             data-bs-trigger="hover"
+                                             data-bs-content="@slotEntry.Enhancement?.EnhancementName"
+                                             style="width: 40px; height: 40px;">
+                                                        @{
+                                                            var enhancementName = slotEntry.Enhancement?.EnhancementName;
+                                                            var sanitizedEnhancementName = enhancementName?.Split(':')[0].Trim().Replace("'", "");
+                                                            if (!string.IsNullOrEmpty(sanitizedEnhancementName))
+                                                            {
+                                                                sanitizedEnhancementName = sanitizedEnhancementName.Replace(" ", "_");
+                                                            }
+
+                                                            var imageUrl = await imageService.EnhancementImageLookupAsync(sanitizedEnhancementName);
+                                                        }
+
+                                                        @if (!string.IsNullOrEmpty(imageUrl))
+                                                        {
+                                                            <img src="@imageUrl" alt="@slotEntry.Enhancement?.EnhancementName" style="width: 100%; height: 100%;" />
+                                                        }
+                                                    </div>
+                                                    <div class="subscript">@slotEntry.Level</div>
+
+                                                    @if (slotEntry.Enhancement?.IoLevel != null)
+                                                    {
+                                                        <sup class="superscript">@((slotEntry.Enhancement?.IoLevel + 1))</sup>
+                                                    }
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
 
         </div>
     </div>
@@ -417,6 +418,8 @@
 
 
 @section Scripts {
+
+
     <script>
 
         function confirmDownload() {
@@ -431,13 +434,22 @@
 
 
         $(document).ready(function () {
-            $("#toggleSubscripts").click(function () {
-                $(".subscript").toggle();
+            // Initially hide the first powerGroup
+            $('#powerGroup0').hide();
+
+            // Toggle the first powerGroup when the button is clicked
+            $('#toggleInherentPowers').click(function () {
+                $('#powerGroup0').toggle();
             });
 
-            $("#toggleSuperscripts").click(function () {
-                $(".superscript").toggle();
+
+                $("#toggleSubscripts").click(function () {
+                    $(".subscript").toggle();
+                });
+
+                $("#toggleSuperscripts").click(function () {
+                    $(".superscript").toggle();
+                });
             });
-        });
     </script>
 }

@@ -1,6 +1,7 @@
 ﻿using CBD.Data;
 using CBD.Enums;
 using CBD.Models;
+using Microsoft.EntityFrameworkCore;
 using System.Configuration;
 
 namespace CBD.Services
@@ -23,8 +24,6 @@ namespace CBD.Services
             {
                 searchTerm = searchTerm.ToLower();
             }
-
-
             //public only
             //var builds = _context.Build.Where(p => p.ReadyStatus == ReadyStatus.PublicReady).AsQueryable();
 
@@ -33,23 +32,28 @@ namespace CBD.Services
 
             if (searchTerm != null)
             {
-                builds = builds.Where(build =>
-                                build.Name.ToLower().Contains(searchTerm) || // Search in build names
-                                build.CBDUser.Name.ToLower().Contains(searchTerm) || // Search in user names
-                                build.CBDUser.GlobalName.ToLower().Contains(searchTerm) || // Search in global user names
-                                build.Class.ToLower().Contains(searchTerm) || // Search in class names
-                                build.PowerSets.Any(ps => // Search in power sets
-                                    ps.Name.ToLower().Contains(searchTerm) ||
-                                    ps.NameDisplay.ToLower().Contains(searchTerm)
-    )
-);
-
-
-                //builds = builds.Where(
-                //    p => p.Name.ToLower().Contains(searchTerm) ||
-                //    p.CBDUser.Name.ToLower().Contains(searchTerm) ||
-                //    p.CBDUser.GlobalName.ToLower().Contains(searchTerm)
-                //    );
+                builds = builds
+                    .Include(b => b.CBDUser)
+                    .Include(b => b.Server)
+                    .Include(b => b.PowerSets)
+                    .Where(build =>
+                        build.Name.ToLower().Contains(searchTerm) || // Search in build names
+                        build.CBDUser.Name.ToLower().Contains(searchTerm) || // Search in user names
+                        build.CBDUser.GlobalName.ToLower().Contains(searchTerm) || // Search in global user names
+                        build.Class.ToLower().Contains(searchTerm) || // Search in class names
+                        build.PowerSets.Any(ps => // Search in power sets
+                            ps.Name.ToLower().Contains(searchTerm) ||
+                            ps.NameDisplay.ToLower().Contains(searchTerm)
+                        )
+                    );
+            }
+            else
+            {
+                // If no search term provided, include related entities without filtering
+                builds = builds
+                    .Include(b => b.CBDUser)
+                    .Include(b => b.Server)
+                    .Include(b => b.PowerSets);
             }
 
             return builds.OrderByDescending(p => p.Created);
