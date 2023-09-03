@@ -200,3 +200,7 @@ div.swal2-container.swal2-center.swal2-backdrop-show > div {
     background: #212121;
     border-radius: 10px;
 }
+
+body {
+    background-color: lightgray;
+}
