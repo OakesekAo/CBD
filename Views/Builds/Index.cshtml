@@ -62,9 +62,9 @@
                 {
                     <a asp-action="Details" asp-route-id="@item.Id">
                     <tr class="row-link" onclick="window.location.href='@Url.Action("Details", "Builds", new { id = item.Id })';">
-                        <td><img src="~/images/archetypes/@($"{item.Class}.png")" alt="@Html.DisplayFor(modelItem => item.ClassDisplay)" /></td>
-                        <td>@Html.DisplayFor(modelItem => item.PowerSets[0].NameDisplay)</td>
-                        <td>@Html.DisplayFor(modelItem => item.PowerSets[1].NameDisplay)</td>
+                        <td><img src="~/images/archetypes/@($"{item.Class}.png")" alt="@Html.DisplayFor(modelItem => item.ClassDisplay)" /></td>                        
+                        <td>@item.PowerSets.FirstOrDefault(ps => ps.Type == CBD.Enums.PowerSetType.Primary)?.NameDisplay</td>
+                        <td>@item.PowerSets.FirstOrDefault(ps => ps.Type == CBD.Enums.PowerSetType.Secondary)?.NameDisplay</td>
                         <td class="text-truncate" style="max-width: 175px;">@Html.DisplayFor(modelItem => item.Name)</td>
                         <td class="text-truncate" style="max-width: 175px;" >@Html.DisplayFor(modelItem => item.Comment)</td>
                         <td>@Html.DisplayFor(modelItem => item.CBDUser.GlobalName)</td>
